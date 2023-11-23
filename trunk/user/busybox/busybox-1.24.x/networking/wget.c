@@ -65,19 +65,13 @@
 //config:	  If you select "openssl" helper, wget will effectively run:
 //config:	  "openssl s_client -quiet -connect hostname:443
 //config:	  -servername hostname 2>/dev/null" and pipe its data
-//config:	  through it.  (-servername should only be used with FQDNs,
-//config:	  not IP addresses.)
+//config:	  through it. -servername is not used if hostname is numeric.
 //config:	  Note inconvenient API: host resolution is done twice,
 //config:	  and there is no guarantee openssl's idea of IPv6 address
 //config:	  format is the same as ours.
 //config:	  Another problem is that s_client prints debug information
 //config:	  to stderr, and it needs to be suppressed. This means
 //config:	  all error messages get suppressed too.
-//config:	  Also, if the s_client subcommand is not compiled in to
-//config:	  the system's openssl binary (i.e. subcommand fails), or
-//config:	  certain subcommand flags aren't available/supported,
-//config:	  openssl returns exit code 0, making it difficult to
-//config:	  detect a true error/failure.
 //config:	  openssl is also a big binary, often dynamically linked
 //config:	  against ~15 libraries.
 //config:
@@ -342,6 +336,7 @@ static void alarm_handler(int sig UNUSED_PARAM)
 }
 #endif
 
+#if ENABLE_FEATURE_WGET_OPENSSL
 /*
  * is_ip_address() attempts to verify whether or not a string
  * contains an IPv4 or IPv6 address (vs. an FQDN).  The result
@@ -353,13 +348,17 @@ static void alarm_handler(int sig UNUSED_PARAM)
 static int is_ip_address(const char *string)
 {
 	struct sockaddr_in sa;
-	int result = inet_pton(AF_INET, string, &(sa.sin_addr));
 
-	if (ENABLE_FEATURE_IPV6 && result == 0) {
-		result = inet_pton(AF_INET6, string, &(sa.sin_addr));
+	int result = inet_pton(AF_INET, string, &(sa.sin_addr));
+# if ENABLE_FEATURE_IPV6
+	if (result == 0) {
+		struct sockaddr_in6 sa6;
+		result = inet_pton(AF_INET6, string, &(sa6.sin6_addr));
 	}
-	return (result != 0);
+# endif
+	return (result == 1);
 }
+#endif
 
 static FILE *open_socket(len_and_sockaddr *lsa)
 {
@@ -639,7 +638,6 @@ static int spawn_https_helper_openssl(const char *host, unsigned port)
 {
 	char *allocated = NULL;
 	char *servername;
-	char *colon_ptr;
 	int sp[2];
 	int pid;
 	IF_FEATURE_WGET_SSL_HELPER(volatile int child_failed = 0;)
@@ -647,30 +645,11 @@ static int spawn_https_helper_openssl(const char *host, unsigned port)
 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) != 0)
 		/* Kernel can have AF_UNIX support disabled */
 		bb_perror_msg_and_die("socketpair");
-	/*
-	 * Per RFC 6066 Section 3, the only permitted values in the
-	 * TLS server_name (SNI) field are FQDNs (DNS hostnames).
-	 * IPv4 nor IPv6 addresses are supported, nor is use of an
-	 * alternate port number.
-	 *
-	 * The host argument to spawn_https_helper_openssl() can
-	 * contain things like: test.com, test.com:8080, 1.2.3.4, or
-	 * 1.2.3.4:8888.  The strchr() check determines if the user
-	 * passed something like test.com:8080 or 1.2.3.4:8888.
-	 *
-	 * The rest of the code ensures that servername only gets
-	 * set to the hostname portion, and that the -servername
-	 * argument to openssl s_client is only used if the hostname
-	 * itself is an actual FQDN, not an IPv4/IPv6 address.
-	 */
+
 	if (!strchr(host, ':'))
 		host = allocated = xasprintf("%s:%u", host, port);
 	servername = xstrdup(host);
-	colon_ptr = strrchr(servername, ':');
-	*colon_ptr = '\0';
-
-	if (is_ip_address(servername))
-		servername = NULL;
+	strrchr(servername, ':')[0] = '\0';
 
 	fflush_all();
 	pid = xvfork();
@@ -678,7 +657,6 @@ static int spawn_https_helper_openssl(const char *host, unsigned port)
 		/* Child */
 		char *argv[8];
 
-		memset(&argv, 0, sizeof(argv));
 		close(sp[0]);
 		xmove_fd(sp[1], 0);
 		xdup2(0, 1);
@@ -689,13 +667,18 @@ static int spawn_https_helper_openssl(const char *host, unsigned port)
 		 */
 		xmove_fd(2, 3);
 		xopen("/dev/null", O_RDWR);
+		memset(&argv, 0, sizeof(argv));
 		argv[0] = (char*)"openssl";
 		argv[1] = (char*)"s_client";
 		argv[2] = (char*)"-quiet";
 		argv[3] = (char*)"-connect";
 		argv[4] = (char*)host;
-		
-		if (servername) {
+		/*
+		 * Per RFC 6066 Section 3, the only permitted values in the
+		 * TLS server_name (SNI) field are FQDNs (DNS hostnames).
+		 * IPv4 and IPv6 addresses, port numbers are not allowed.
+		 */
+		if (!is_ip_address(servername)) {
 			argv[5] = (char*)"-servername";
 			argv[6] = (char*)servername;
 		}
