@@ -137,6 +137,7 @@
 # define SENDFMT(fp, fmt, ...) fprintf(fp, fmt, ##__VA_ARGS__)
 #endif
 
+#define SSL_SUPPORTED (ENABLE_FEATURE_WGET_OPENSSL || ENABLE_FEATURE_WGET_SSL_HELPER)
 
 struct host_info {
 	char *allocated;
@@ -148,7 +149,9 @@ struct host_info {
 };
 static const char P_FTP[] = "ftp";
 static const char P_HTTP[] = "http";
+#if SSL_SUPPORTED
 static const char P_HTTPS[] = "https";
+#endif
 
 #if ENABLE_FEATURE_WGET_LONG_OPTIONS
 /* User-specified headers prevent using our corresponding built-in headers.  */
@@ -435,10 +438,12 @@ static void parse_url(const char *src_url, struct host_info *h)
 		if (strcmp(url, P_FTP) == 0) {
 			h->port = bb_lookup_port(P_FTP, "tcp", 21);
 		} else
+#if SSL_SUPPORTED
 		if (strcmp(url, P_HTTPS) == 0) {
 			h->port = bb_lookup_port(P_HTTPS, "tcp", 443);
 			h->protocol = P_HTTPS;
 		} else
+#endif
 		if (strcmp(url, P_HTTP) == 0) {
  http:
 			h->port = bb_lookup_port(P_HTTP, "tcp", 80);
@@ -1074,6 +1079,20 @@ static void download_one_url(const char *url)
 		}
 
 		fflush(sfp);
+
+/* Tried doing this unconditionally.
+ * Cloudflare and nginx/1.11.5 are shocked to see SHUT_WR on non-HTTPS.
+ */
+#if SSL_SUPPORTED
+		if (target.protocol == P_HTTPS) {
+			/* If we use SSL helper, keeping our end of the socket open for writing
+			 * makes our end (i.e. the same fd!) readable (EAGAIN instead of EOF)
+			 * even after child closes its copy of the fd.
+			 * This helps:
+			 */
+			shutdown(fileno(sfp), SHUT_WR);
+		}
+#endif
 
 		/*
 		 * Retrieve HTTP response line and check for "200" status code.
