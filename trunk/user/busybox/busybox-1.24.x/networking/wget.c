@@ -113,6 +113,7 @@
 //usage:#define wget_full_usage "\n\n"
 //usage:       "Retrieve files via HTTP or FTP\n"
 //usage:     "\n	-s	Spider mode - only check file existence"
+///////:     "\n	--no-check-certificate	Don't validate the server's certificate"
 //usage:     "\n	-c	Continue retrieval of aborted transfer"
 //usage:     "\n	-q	Quiet"
 //usage:     "\n	-P DIR	Save to DIR (default .)"
@@ -240,6 +241,7 @@ enum {
 	WGET_OPT_PASSIVE    = (1 << 9),
 	WGET_OPT_HEADER     = (1 << 10) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
 	WGET_OPT_POST_DATA  = (1 << 11) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
+	WGET_OPT_NO_CHECK_CERT = (1 << 12) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
 };
 
 enum {
@@ -719,6 +721,11 @@ static void spawn_https_helper_small(int network_fd)
 {
 	int sp[2];
 	int pid;
+
+	if (!(option_mask32 & WGET_OPT_NO_CHECK_CERT)) {
+		bb_error_msg("note: TLS certificate validation not implemented");
+		option_mask32 |= WGET_OPT_NO_CHECK_CERT;
+	}
 
 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) != 0)
 		/* Kernel can have AF_UNIX support disabled */
@@ -1282,7 +1289,6 @@ int wget_main(int argc UNUSED_PARAM, char **argv)
 		"passive-ftp\0"      No_argument       "\xff"
 		"header\0"           Required_argument "\xfe"
 		"post-data\0"        Required_argument "\xfd"
-		/* Ignored (we don't do ssl) */
 		"no-check-certificate\0" No_argument   "\xfc"
 		/* Ignored (we don't support caching) */
 		"no-cache\0"         No_argument       "\xfb"
