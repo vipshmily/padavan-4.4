@@ -51,6 +51,9 @@
 //config:	  FEATURE_WGET_LONG_OPTIONS is also enabled, the --timeout option
 //config:	  will work in addition to -T.
 //config:
+//config:	  FEATURE_WGET_OPENSSL does implement TLS verification
+//config:	  using the certificates available to OpenSSL.
+//config:
 //config:config FEATURE_WGET_OPENSSL
 //config:	bool "Try to connect to HTTPS using openssl"
 //config:	default y
@@ -75,6 +78,9 @@
 //config:	  openssl is also a big binary, often dynamically linked
 //config:	  against ~15 libraries.
 //config:
+//config:	  By default TLS verification is performed, unless
+//config:	  --no-check-certificate option is passed.
+
 //config:config FEATURE_WGET_SSL_HELPER
 //config:	bool "Try to connect to HTTPS using ssl_helper"
 //config:	default y
@@ -102,8 +108,11 @@
 //usage:	IF_FEATURE_WGET_LONG_OPTIONS(
 //usage:       "[-c|--continue] [-s|--spider] [-q|--quiet] [-O|--output-document FILE]\n"
 //usage:       "	[--header 'header: value'] [-Y|--proxy on/off] [-P DIR]\n"
+//usage:	IF_FEATURE_WGET_OPENSSL(
+//usage:       "	[--no-check-certificate]\n"
+//usage:	)
 /* Since we ignore these opts, we don't show them in --help */
-/* //usage:    "	[--no-check-certificate] [--no-cache]" */
+/* //usage:    "	[--no-cache]" */
 //usage:       "	[-U|--user-agent AGENT]" IF_FEATURE_WGET_TIMEOUT(" [-T SEC]") " URL..."
 //usage:	)
 //usage:	IF_NOT_FEATURE_WGET_LONG_OPTIONS(
@@ -113,7 +122,9 @@
 //usage:#define wget_full_usage "\n\n"
 //usage:       "Retrieve files via HTTP or FTP\n"
 //usage:     "\n	-s	Spider mode - only check file existence"
-///////:     "\n	--no-check-certificate	Don't validate the server's certificate"
+//usage:	IF_FEATURE_WGET_OPENSSL(
+//usage:     "\n	--no-check-certificate	Don't validate the server's certificate"
+//usage:	)
 //usage:     "\n	-c	Continue retrieval of aborted transfer"
 //usage:     "\n	-q	Quiet"
 //usage:     "\n	-P DIR	Save to DIR (default .)"
@@ -662,7 +673,7 @@ static int spawn_https_helper_openssl(const char *host, unsigned port)
 	pid = xvfork();
 	if (pid == 0) {
 		/* Child */
-		char *argv[8];
+		char *argv[9];
 
 		close(sp[0]);
 		xmove_fd(sp[1], 0);
@@ -688,6 +699,9 @@ static int spawn_https_helper_openssl(const char *host, unsigned port)
 		if (!is_ip_address(servername)) {
 			argv[5] = (char*)"-servername";
 			argv[6] = (char*)servername;
+		}
+		if (!(option_mask32 & WGET_OPT_NO_CHECK_CERT)) {
+			argv[7] = (char*)"-verify_return_error";
 		}
 
 		BB_EXECVP(argv[0], argv);
