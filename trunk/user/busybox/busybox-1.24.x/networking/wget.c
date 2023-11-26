@@ -338,15 +338,6 @@ static char *base64enc(const char *str)
 }
 #endif
 
-static char* sanitize_string(char *s)
-{
-	unsigned char *p = (void *) s;
-	while (*p >= ' ')
-		p++;
-	*p = '\0';
-	return s;
-}
-
 #if ENABLE_FEATURE_WGET_TIMEOUT
 static void alarm_handler(int sig UNUSED_PARAM)
 {
@@ -398,21 +389,47 @@ static FILE *open_socket(len_and_sockaddr *lsa)
 	return fp;
 }
 
+/* We balk at any control chars in other side's messages.
+ * This prevents nasty surprises (e.g. ESC sequences) in "Location:" URLs
+ * and error messages.
+ *
+ * The only exception is tabs, which are converted to (one) space:
+ * HTTP's "headers: <whitespace> values" may have those.
+ */
+static char* sanitize_string(char *s)
+{
+	unsigned char *p = (void *) s;
+	while (*p) {
+		if (*p < ' ') {
+			if (*p != '\t')
+				break;
+			*p = ' ';
+		}
+		p++;
+	}
+	*p = '\0';
+	return s;
+}
 /* Returns '\n' if it was seen, else '\0'. Trims at first '\r' or '\n' */
 /* FIXME: does not respect FEATURE_WGET_TIMEOUT and -T N: */
-static char fgets_and_trim(FILE *fp, const char *fmt)
+static char fgets_trim_sanitize(FILE *fp, const char *fmt)
 {
 	char c;
 	char *buf_ptr;
 
-	if (fgets(G.wget_buf, sizeof(G.wget_buf) - 1, fp) == NULL)
+	if (fgets(G.wget_buf, sizeof(G.wget_buf), fp) == NULL)
 		bb_perror_msg_and_die("error getting response");
 
 	buf_ptr = strchrnul(G.wget_buf, '\n');
 	c = *buf_ptr;
+#if 1
+	/* Disallow any control chars: trim at first char < 0x20 */
+	sanitize_string(G.wget_buf);
+#else
 	*buf_ptr = '\0';
 	buf_ptr = strchrnul(G.wget_buf, '\r');
 	*buf_ptr = '\0';
+#endif
 
 	log_io("< %s", G.wget_buf);
 
@@ -436,8 +453,10 @@ static int ftpcmd(const char *s1, const char *s2, FILE *fp)
 		log_io("> %s%s", s1, s2);
 	}
 
+	/* Read until "Nxx something" is received */
+	G.wget_buf[3] = 0;
 	do {
-		fgets_and_trim(fp, "%s\n");
+		fgets_trim_sanitize(fp, "%s\n");
 	} while (!isdigit(G.wget_buf[0]) || G.wget_buf[3] != ' ');
 
 	G.wget_buf[3] = '\0';
@@ -473,7 +492,7 @@ static void parse_url(const char *src_url, struct host_info *h)
 			h->protocol = P_HTTP;
 		} else {
 			*p = ':';
-			bb_error_msg_and_die("not an http or ftp url: %s", sanitize_string(url));
+			bb_error_msg_and_die("not an http or ftp url: %s", url);
 		}
 	} else {
 		// GNU wget is user-friendly and falls back to http://
@@ -528,13 +547,13 @@ static void parse_url(const char *src_url, struct host_info *h)
 	 */
 }
 
-static char *gethdr(FILE *fp)
+static char *get_sanitized_hdr(FILE *fp)
 {
 	char *s, *hdrval;
 	int c;
 
 	/* retrieve header line */
-	c = fgets_and_trim(fp, "  %s\n");
+	c = fgets_trim_sanitize(fp, "  %s\n");
 
 	/* end of the headers? */
 	if (G.wget_buf[0] == '\0')
@@ -556,7 +575,7 @@ static char *gethdr(FILE *fp)
 
 	/* verify we are at the end of the header name */
 	if (*s != ':')
-		bb_error_msg_and_die("bad header line: %s", sanitize_string(G.wget_buf));
+		bb_error_msg_and_die("bad header line: %s", G.wget_buf);
 
 	/* locate the start of the header value */
 	*s++ = '\0';
@@ -910,9 +929,9 @@ static void NOINLINE retrieve_file_data(FILE *dfp)
 		if (!G.chunked)
 			break;
 
-		fgets_and_trim(dfp, NULL); /* Eat empty line */
+		fgets_trim_sanitize(dfp, NULL); /* Eat empty line */
  get_clen:
-		fgets_and_trim(dfp, NULL);
+		fgets_trim_sanitize(dfp, NULL);
 		G.content_len = STRTOOFF(G.wget_buf, NULL, 16);
 		/* FIXME: error check? */
 		if (G.content_len == 0)
@@ -1142,7 +1161,7 @@ static void download_one_url(const char *url)
 		 * Retrieve HTTP response line and check for "200" status code.
 		 */
  read_response:
-		fgets_and_trim(sfp, "  %s\n");
+		fgets_trim_sanitize(sfp, "  %s\n");
 
 		str = G.wget_buf;
 		str = skip_non_whitespace(str);
@@ -1153,7 +1172,7 @@ static void download_one_url(const char *url)
 		switch (status) {
 		case 0:
 		case 100:
-			while (gethdr(sfp) != NULL)
+			while (get_sanitized_hdr(sfp) != NULL)
 				/* eat all remaining headers */;
 			goto read_response;
 		case 200:
@@ -1201,13 +1220,13 @@ However, in real world it was observed that some web servers
 			/* Partial Content even though we did not ask for it??? */
 			/* fall through */
 		default:
-			bb_error_msg_and_die("server returned error: %s", sanitize_string(G.wget_buf));
+			bb_error_msg_and_die("server returned error: %s", G.wget_buf);
 		}
 
 		/*
 		 * Retrieve HTTP headers.
 		 */
-		while ((str = gethdr(sfp)) != NULL) {
+		while ((str = get_sanitized_hdr(sfp)) != NULL) {
 			static const char keywords[] ALIGN1 =
 				"content-length\0""transfer-encoding\0""location\0";
 			enum {
@@ -1215,7 +1234,7 @@ However, in real world it was observed that some web servers
 			};
 			smalluint key;
 
-			/* gethdr converted "FOO:" string to lowercase */
+			/* get_sanitized_hdr converted "FOO:" string to lowercase */
 
 			/* strip trailing whitespace */
 			char *s = strchrnul(str, '\0') - 1;
@@ -1227,14 +1246,14 @@ However, in real world it was observed that some web servers
 			if (key == KEY_content_length) {
 				G.content_len = BB_STRTOOFF(str, NULL, 10);
 				if (G.content_len < 0 || errno) {
-					bb_error_msg_and_die("content-length %s is garbage", sanitize_string(str));
+					bb_error_msg_and_die("content-length %s is garbage", str);
 				}
 				G.got_clen = 1;
 				continue;
 			}
 			if (key == KEY_transfer_encoding) {
 				if (strcmp(str_tolower(str), "chunked") != 0)
-					bb_error_msg_and_die("transfer encoding '%s' is not supported", sanitize_string(str));
+					bb_error_msg_and_die("transfer encoding '%s' is not supported", str);
 				G.chunked = 1;
 			}
 			if (key == KEY_location && status >= 300) {
@@ -1243,7 +1262,7 @@ However, in real world it was observed that some web servers
 				fclose(sfp);
 				if (str[0] == '/') {
 					free(redirected_path);
-					target.path = redirected_path = xstrdup(str+1);
+					target.path = redirected_path = xstrdup(str + 1);
 					/* lsa stays the same: it's on the same server */
 				} else {
 					parse_url(str, &target);
@@ -1290,7 +1309,7 @@ However, in real world it was observed that some web servers
 		/* It's ftp. Close data connection properly */
 		fclose(dfp);
 		if (ftpcmd(NULL, NULL, sfp) != 226)
-			bb_error_msg_and_die("ftp error: %s", sanitize_string(G.wget_buf + 4));
+			bb_error_msg_and_die("ftp error: %s", G.wget_buf);
 		/* ftpcmd("QUIT", NULL, sfp); - why bother? */
 	}
 	fclose(sfp);
