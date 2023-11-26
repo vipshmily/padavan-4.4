@@ -106,7 +106,7 @@
 
 //usage:#define wget_trivial_usage
 //usage:	IF_FEATURE_WGET_LONG_OPTIONS(
-//usage:       "[-c|--continue] [-s|--spider] [-q|--quiet] [-O|--output-document FILE]\n"
+//usage:       "[-c|--continue] [--spider] [-q|--quiet] [-O|--output-document FILE]\n"
 //usage:       "	[--header 'header: value'] [-Y|--proxy on/off] [-P DIR]\n"
 //usage:	IF_FEATURE_WGET_OPENSSL(
 //usage:       "	[--no-check-certificate]\n"
@@ -116,24 +116,26 @@
 //usage:       "	[-U|--user-agent AGENT]" IF_FEATURE_WGET_TIMEOUT(" [-T SEC]") " URL..."
 //usage:	)
 //usage:	IF_NOT_FEATURE_WGET_LONG_OPTIONS(
-//usage:       "[-csq] [-O FILE] [-Y on/off] [-P DIR] [-U AGENT]"
+//usage:       "[-cq] [-O FILE] [-Y on/off] [-P DIR] [-U AGENT]"
 //usage:			IF_FEATURE_WGET_TIMEOUT(" [-T SEC]") " URL..."
 //usage:	)
 //usage:#define wget_full_usage "\n\n"
 //usage:       "Retrieve files via HTTP or FTP\n"
-//usage:     "\n	-s	Spider mode - only check file existence"
+//usage:	IF_FEATURE_WGET_LONG_OPTIONS(
+//usage:     "\n	--spider	Spider mode - only check file existence"
+//usage:	)
 //usage:	IF_FEATURE_WGET_OPENSSL(
 //usage:     "\n	--no-check-certificate	Don't validate the server's certificate"
 //usage:	)
-//usage:     "\n	-c	Continue retrieval of aborted transfer"
-//usage:     "\n	-q	Quiet"
-//usage:     "\n	-P DIR	Save to DIR (default .)"
+//usage:     "\n	-c		Continue retrieval of aborted transfer"
+//usage:     "\n	-q		Quiet"
+//usage:     "\n	-P DIR		Save to DIR (default .)"
 //usage:	IF_FEATURE_WGET_TIMEOUT(
-//usage:     "\n	-T SEC	Network read timeout is SEC seconds"
+//usage:     "\n	-T SEC		Network read timeout is SEC seconds"
 //usage:	)
-//usage:     "\n	-O FILE	Save to FILE ('-' for stdout)"
-//usage:     "\n	-U STR	Use STR for User-Agent header"
-//usage:     "\n	-Y	Use proxy ('on' or 'off')"
+//usage:     "\n	-O FILE		Save to FILE ('-' for stdout)"
+//usage:     "\n	-U STR		Use STR for User-Agent header"
+//usage:     "\n	-Y on/off	Use proxy"
 
 #include "libbb.h"
 
@@ -241,17 +243,17 @@ struct globals {
 /* Must match option string! */
 enum {
 	WGET_OPT_CONTINUE   = (1 << 0),
-	WGET_OPT_SPIDER     = (1 << 1),
-	WGET_OPT_QUIET      = (1 << 2),
-	WGET_OPT_OUTNAME    = (1 << 3),
-	WGET_OPT_PREFIX     = (1 << 4),
-	WGET_OPT_PROXY      = (1 << 5),
-	WGET_OPT_USER_AGENT = (1 << 6),
-	WGET_OPT_NETWORK_READ_TIMEOUT = (1 << 7),
-	WGET_OPT_RETRIES    = (1 << 8),
-	WGET_OPT_PASSIVE    = (1 << 9),
-	WGET_OPT_HEADER     = (1 << 10) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
-	WGET_OPT_POST_DATA  = (1 << 11) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
+	WGET_OPT_QUIET      = (1 << 1),
+	WGET_OPT_OUTNAME    = (1 << 2),
+	WGET_OPT_PREFIX     = (1 << 3),
+	WGET_OPT_PROXY      = (1 << 4),
+	WGET_OPT_USER_AGENT = (1 << 5),
+	WGET_OPT_NETWORK_READ_TIMEOUT = (1 << 6),
+	WGET_OPT_RETRIES    = (1 << 7),
+	WGET_OPT_nsomething = (1 << 8),
+	WGET_OPT_HEADER     = (1 << 9) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
+	WGET_OPT_POST_DATA  = (1 << 10) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
+	WGET_OPT_SPIDER     = (1 << 11) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
 	WGET_OPT_NO_CHECK_CERT = (1 << 12) * ENABLE_FEATURE_WGET_LONG_OPTIONS,
 };
 
@@ -1300,8 +1302,6 @@ int wget_main(int argc UNUSED_PARAM, char **argv)
 	static const char wget_longopts[] ALIGN1 =
 		/* name, has_arg, val */
 		"continue\0"         No_argument       "c"
-//FIXME: -s isn't --spider, it's --save-headers!
-		"spider\0"           No_argument       "s"
 		"quiet\0"            No_argument       "q"
 		"output-document\0"  Required_argument "O"
 		"directory-prefix\0" Required_argument "P"
@@ -1316,6 +1316,7 @@ int wget_main(int argc UNUSED_PARAM, char **argv)
 		"passive-ftp\0"      No_argument       "\xff"
 		"header\0"           Required_argument "\xfe"
 		"post-data\0"        Required_argument "\xfd"
+		"spider\0"           No_argument       "\xfd"
 		"no-check-certificate\0" No_argument   "\xfc"
 		/* Ignored (we don't support caching) */
 		"no-cache\0"         No_argument       "\xfb"
@@ -1341,7 +1342,7 @@ int wget_main(int argc UNUSED_PARAM, char **argv)
 	opt_complementary = "-1"
 			IF_FEATURE_WGET_TIMEOUT(":T+")
 			IF_FEATURE_WGET_LONG_OPTIONS(":\xfe::");
-	getopt32(argv, "csqO:P:Y:U:T:" /*ignored:*/ "t:",
+	getopt32(argv, "cqO:P:Y:U:T:" /*ignored:*/ "t:",
 		&G.fname_out, &G.dir_prefix,
 		&G.proxy_flag, &G.user_agent,
 		IF_FEATURE_WGET_TIMEOUT(&G.timeout_seconds) IF_NOT_FEATURE_WGET_TIMEOUT(NULL),
@@ -1349,6 +1350,15 @@ int wget_main(int argc UNUSED_PARAM, char **argv)
 		IF_FEATURE_WGET_LONG_OPTIONS(, &headers_llist)
 		IF_FEATURE_WGET_LONG_OPTIONS(, &G.post_data)
 	);
+#if 0 /* option bits debug */
+	if (option_mask32 & WGET_OPT_RETRIES) bb_error_msg("-t NUM");
+	if (option_mask32 & WGET_OPT_nsomething) bb_error_msg("-nsomething");
+	if (option_mask32 & WGET_OPT_HEADER) bb_error_msg("--header");
+	if (option_mask32 & WGET_OPT_POST_DATA) bb_error_msg("--post-data");
+	if (option_mask32 & WGET_OPT_SPIDER) bb_error_msg("--spider");
+	if (option_mask32 & WGET_OPT_NO_CHECK_CERT) bb_error_msg("--no-check-certificate");
+	exit(0);
+#endif
 	argv += optind;
 
 #if ENABLE_FEATURE_WGET_LONG_OPTIONS
