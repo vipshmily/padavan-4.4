@@ -52,6 +52,8 @@ on:
         - 'WE410443-TC'
         - 'HAR-20S2U1'
         - 'SIM-AX1800T'
+        - 'G-AX1800'
+        - 'WIA3300-10'
         default: 'K2P'
       release:
         type: boolean
@@ -66,7 +68,7 @@ jobs:
       - uses: hendrikmuhs/ccache-action@v1.2
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.21.6'
+          go-version: '1.22.1'
           check-latest: true
           cache-dependency-path: '**/go.sum'
       - name: Prepare environment
