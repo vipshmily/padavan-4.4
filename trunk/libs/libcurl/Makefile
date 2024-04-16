@@ -1,5 +1,5 @@
-SRC_NAME=curl-8.5.0
-SRC_URL=https://github.com/curl/curl/releases/download/curl-8_5_0/curl-8.5.0.tar.xz
+SRC_NAME=curl-8.7.1
+SRC_URL=https://github.com/curl/curl/releases/download/curl-8_7_1/curl-8.7.1.tar.xz
 
 LDFLAGS += -Wl,-rpath-link=$(STAGEDIR)/lib
 
@@ -14,7 +14,6 @@ download_test:
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
 		tar xf $(SRC_NAME).tar.xz; \
-		patch -d $(SRC_NAME) -p1 -i ../no_docs_test.patch; \
 	fi )
 
 config_test:
@@ -50,9 +49,11 @@ configure:
 		--disable-tls-srp \
 		--disable-libcurl-option \
 		--disable-threaded-resolver \
+		--disable-docs \
 		--without-gnutls \
 		--without-libidn \
 		--without-libssh2 \
+		--without-libpsl \
 		--without-krb4 \
 		--without-nss \
 		--without-ca-path \
