@@ -36,11 +36,12 @@ on:
         - 'MSG1500'
         - 'MSG1500-Z'
         - 'NETGEAR-BZV'
+        - 'NETGEAR-R6800'
+        - 'NETGEAR-R7450'
         - 'NEWIFI'
         - 'NEWIFI3'
         - 'QM-B1'
         - 'R2100'
-        - 'R6800'
         - 'RE-CP-02'
         - 'RE-SP-01B'
         - 'RM2100'
@@ -54,6 +55,7 @@ on:
         - 'SIM-AX1800T'
         - 'G-AX1800'
         - 'WIA3300-10'
+        - 'JCG-Q11Pro'
         default: 'K2P'
       release:
         type: boolean
@@ -70,7 +72,11 @@ jobs:
         with:
           go-version: '1.22.1'
           check-latest: true
-          cache-dependency-path: '**/go.sum'
+          cache: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          check-latest: true
       - name: Prepare environment
         run: |
           sudo apt update
