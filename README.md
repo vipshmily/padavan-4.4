@@ -63,6 +63,7 @@ This project is based on original rt-n56u with latest mtk 4.4.198 kernel, which 
 - G-AX1800(富春江G-AX1800, from https://github.com/ddyjyj/padavan-4.4, 没有机器测试，自行判断)
 - WIA3300-10(西加云杉WIA3300-10，from https://github.com/vb1980/padavan-4.4, 没有机器测试，自行判断)
 - JCQ-Q11Pro(from https://github.com/qewwqewq22/padavan11, 没有机器测试，自行判断)
+- NETGEAR-R7450(from https://github.com/vipshmily/padavan-4.4, 没有机器测试，自行判断)
 # Compilation steps
 
 - Install dependencies
