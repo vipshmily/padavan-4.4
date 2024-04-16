@@ -1,4 +1,4 @@
-SRC_NAME=miniupnpd-2.x
+SRC_NAME=miniupnpd-2.3.6
 
 # reference to iptables package
 IPT_VERSION:=iptables-1.8.7
@@ -10,7 +10,7 @@ ENABLE_IPV6:=0
 IPTABLESPATH=$(ROOTDIR)/user/iptables/$(IPT_VERSION)
 
 all:
-	cd $(SRC_NAME) && ./genconfig.sh
+	cd $(SRC_NAME) && ./configure
 	$(MAKE) -f Makefile.linux -C $(SRC_NAME) IPTABLESPATH=$(IPTABLESPATH) ENABLE_IPV6=$(ENABLE_IPV6)
 
 clean:
