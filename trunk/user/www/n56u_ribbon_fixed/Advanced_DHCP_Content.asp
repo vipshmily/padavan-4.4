@@ -501,7 +501,7 @@ function changeBgColor(obj, num){
                                             <th colspan="2" style="background-color: #E3E3E3;"><#t2Advanced#></th>
                                         </tr>
 										<tr>
-                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,5,13);"><#Disable_IPv6DNS_records#></a></th>
+                                            <th width="50%"><#DHCP_Filter_AAAA#></th>
                                             <td>
                                                 <div class="main_itoggle">
                                                     <div id="dhcp_filter_aaa_on_of">
