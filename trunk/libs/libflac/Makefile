@@ -1,4 +1,4 @@
-SRC_NAME=flac-1.4.2
+SRC_NAME=flac-1.4.3
 SRC_URL=https://ftp.osuosl.org/pub/xiph/releases/flac/$(SRC_NAME).tar.xz
 
 all: download_test extract_test config_test
@@ -11,9 +11,9 @@ download_test:
 
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
-		tar xJf  $(SRC_NAME).tar.xz ; \
-		patch -d $(SRC_NAME) -p1 -i ../flac-orig.patch ; \
-		patch -d $(SRC_NAME) -p1 -i ../010-utime.patch ; \
+		tar xf  $(SRC_NAME).tar.xz ; \
+	#	patch -d $(SRC_NAME) -p1 -i ../flac-orig.patch ; \
+	#	patch -d $(SRC_NAME) -p1 -i ../010-utime.patch ; \
 	fi )
 
 config_test:
