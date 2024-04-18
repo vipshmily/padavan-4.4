@@ -30,6 +30,9 @@ config CONFIGURE_has_make_3_81_or_newer
 config CONFIGURE_has_make_4_0_or_newer
     @KCONFIG_make_4_0_or_newer@
 
+config CONFIGURE_has_make_4_4_or_newer
+    @KCONFIG_make_4_4_or_newer@
+
 config CONFIGURE_has_libtool_2_4_or_newer
     @KCONFIG_libtool_2_4_or_newer@
 
@@ -53,6 +56,9 @@ config CONFIGURE_has_python_3_4_or_newer
 
 config CONFIGURE_has_bison_2_7_or_newer
     @KCONFIG_bison_2_7_or_newer@
+
+config CONFIGURE_has_bison_3_0_4_or_newer
+    @KCONFIG_bison_3_0_4_or_newer@
 
 config CONFIGURE_has_python
     @KCONFIG_python@
