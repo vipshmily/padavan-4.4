@@ -127,6 +127,7 @@ dir_y						+= 802.1x
 dir_y						+= wpa_supplicant
 dir_y						+= pppd
 dir_y						+= pppoe
+dir_y                                           += pppoe-relay
 dir_y						+= xl2tpd
 dir_$(CONFIG_FIRMWARE_INCLUDE_RPL2TP)		+= rp-l2tp
 dir_y						+= lldt
@@ -139,6 +140,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS)	+=resolveip
 dir_$(CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME)	+= adguardhome
 dir_$(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS)	+= dns2tcp
 dir_$(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS)	+= dnsproxy
+dir_$(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS)	+= microsocks
 
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS),y)
 dir_$(CONFIG_FIRMWARE_INCLUDE_V2RAY)	        += v2ray

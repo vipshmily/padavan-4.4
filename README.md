@@ -88,7 +88,7 @@ This project is based on original rt-n56u with latest mtk 4.4.198 kernel, which 
   **Optional:** install [golang](https://go.dev/doc/install) (and add it to PATH), if you are going to build go programs
 - Clone source code
   ```sh
-  git clone https://github.com/tsl0922/padavan.git
+  git clone https://github.com/TurBoTse/padavan.git
   ```
 - Modify template file and start compiling
   ```sh

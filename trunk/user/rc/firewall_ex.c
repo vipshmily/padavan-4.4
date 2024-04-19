@@ -679,12 +679,12 @@ include_masquerade(FILE *fp, char *wan_if, char *wan_ip, char *lan_net, int is_f
 
 	if (is_fullcone) {
  		fprintf(fp, "-A %s -o %s -s %s -j MASQUERADE --mode fullcone\n", dtype, wan_if, lan_net);
- 	} else {
- 		if (wan_ip)
- 			fprintf(fp, "-A %s -o %s -s %s -j SNAT --to-source %s\n", dtype, wan_if, lan_net, wan_ip);
- 		else
- 			fprintf(fp, "-A %s -o %s -s %s -j MASQUERADE\n", dtype, wan_if, lan_net);
- 	}
+	} else {
+		if (wan_ip)
+			fprintf(fp, "-A %s -o %s -s %s -j SNAT --to-source %s\n", dtype, wan_if, lan_net, wan_ip);
+		else
+			fprintf(fp, "-A %s -o %s -s %s -j MASQUERADE\n", dtype, wan_if, lan_net);
+	}
 }
 
 static int
@@ -699,7 +699,6 @@ is_need_tcp_mss_wan(int unit, int wan_proto, char *man_if)
 		    wan_proto == IPV4_WAN_PROTO_PPTP ||
 		    wan_proto == IPV4_WAN_PROTO_L2TP)
 			return 1;
-		
 		if (get_interface_mtu(man_if) != 1500)
 			return 1;
 	}*/
@@ -1732,7 +1731,6 @@ ip6t_nat_rules(char *man_if)
 	fclose(fp);
 		doSystem("ip6tables-restore %s", ipt_file);
 }
-
 
 #endif
 

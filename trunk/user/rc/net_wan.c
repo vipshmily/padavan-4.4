@@ -1020,6 +1020,7 @@ start_wan(void)
 #endif
 		}
 	}
+	set_passthrough_pppoe(1);
 }
 
 static void
@@ -1076,6 +1077,7 @@ stop_wan(void)
 		"udpxy",
 		"udhcpc",
 		"zcip",
+		"pppoe-relay",
 		"detect_wan",
 		NULL
 	};
@@ -1105,6 +1107,7 @@ stop_wan(void)
 
 	stop_auth_eapol();
 	stop_auth_kabinet();
+	set_passthrough_pppoe(0);
 
 	kill_services(svcs_wan, 3, 1);
 
