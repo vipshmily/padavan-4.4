@@ -4,6 +4,7 @@
 # Copyright (C) 2017 yushi studio <ywb94@qq.com>
 # Copyright (C) 2018 lean <coolsnowwolf@gmail.com>
 # Copyright (C) 2019 chongshengB <bkye@vip.qq.com>
+# Copyright (C) 2022 TurBoTse <860018505@qq.com>
 #
 # This is free software, licensed under the GNU General Public License v3.
 # See /LICENSE for more information.
@@ -33,6 +34,8 @@ run_mode=`nvram get ss_run_mode`
 lan_con=`nvram get lan_con`
 GLOBAL_SERVER=`nvram get global_server`
 socks=""
+SS_RULES=/usr/bin/ss-rules
+[ -x /etc/storage/ss-rules ] && SS_RULES=/etc/storage/ss-rules
 
 log() {
 	logger -t "$NAME" "$@"
@@ -151,7 +154,8 @@ get_arg_out() {
 start_rules() {
     log "正在添加防火墙规则..."
 	lua /etc_ro/ss/getconfig.lua $GLOBAL_SERVER > /tmp/server.txt
-	server=`cat /tmp/server.txt` 
+	server=`cat /tmp/server.txt`
+	rm -f /tmp/server.txt
 	cat /etc/storage/ss_ip.sh | grep -v '^!' | grep -v "^$" >$wan_fw_ips
 	cat /etc/storage/ss_wan_ip.sh | grep -v '^!' | grep -v "^$" >$wan_bp_ips
 	#resolve name
@@ -175,7 +179,8 @@ start_rules() {
 	if [ "$UDP_RELAY_SERVER" != "nil" ]; then
 		ARG_UDP="-U"
 		lua /etc_ro/ss/getconfig.lua $UDP_RELAY_SERVER > /tmp/userver.txt
-	    udp_server=`cat /tmp/userver.txt` 
+		udp_server=`cat /tmp/userver.txt`
+		rm -f /tmp/userver.txt
 		udp_local_port="1080"
 	fi
 	if [ -n "$lan_ac_ips" ]; then
@@ -197,23 +202,23 @@ start_rules() {
 	if [ "$lan_con" = "0" ]; then
 		rm -f $lan_fp_ips
 		lancon="all"
-		lancons="全部IP走代理"
+		lancons="全部IP走代理..."
 		cat /etc/storage/ss_lan_ip.sh | grep -v '^!' | grep -v "^$" >$lan_fp_ips
 	elif [ "$lan_con" = "1" ]; then
 		rm -f $lan_fp_ips
 		lancon="bip"
-		lancons="指定IP走代理,请到规则管理页面添加需要走代理的IP。"
+		lancons="指定 IP 走代理: 请到规则管理页面添加需要走代理的 IP..."
 		cat /etc/storage/ss_lan_bip.sh | grep -v '^!' | grep -v "^$" >$lan_fp_ips
 	fi
 	rm -f $lan_gm_ips
 	cat /etc/storage/ss_lan_gmip.sh | grep -v '^!' | grep -v "^$" >$lan_gm_ips
 	dports=$(nvram get s_dports)
 	if [ $dports = "0" ]; then
-		proxyport=" "
+		proxyport="--syn"
 	else
-		proxyport="-m multiport --dports 22,53,587,465,995,993,143,80,443"
+		proxyport="-m multiport --dports 22,53,587,465,995,993,143,80,443,3389 --syn"
 	fi
-	/usr/bin/ss-rules \
+	$SS_RULES \
 		-s "$server" \
 		-l "$local_port" \
 		-S "$udp_server" \
@@ -241,7 +246,7 @@ start_redir_tcp() {
 	else
 		threads=$(nvram get ss_threads)
 	fi
-	log "启动 $stype 主服务器..."
+	log "正在启动 $stype 服务器..."
 	case "$stype" in
 	ss | ssr)
 		last_config_file=$CONFIG_FILE
@@ -251,29 +256,29 @@ start_redir_tcp() {
 			usleep 500000
 		done
 		redir_tcp=1
-		log "Shadowsocks/ShadowsocksR $threads 线程启动成功!"
+		log "Shadowsocks/ShadowsocksR $threads 线程启动成功..."
 		;;
 	trojan)
 		for i in $(seq 1 $threads); do
 			run_bin $bin --config $trojan_json_file
 			usleep 500000
 		done
-		log "$($bin --version 2>&1 | head -1) 启动成功!"
+		log "已运行 $($bin --version 2>&1 | head -1)"
 		;;
 	v2ray)
 		run_bin $bin -config $v2_json_file
-		log "$($bin -version | head -1) 启动成功!"
+		log "已运行 $($bin -version | head -1)"
 		;;
 	xray)
 		run_bin $bin -config $v2_json_file
-		log "$($bin -version | head -1) 启动成功!"
+		log "已运行 $($bin -version | head -1)"
 		;;	
 	socks5)
 		for i in $(seq 1 $threads); do
 			run_bin lua /etc_ro/ss/gensocks.lua $GLOBAL_SERVER 1080
 			usleep 500000
 		done
-	    ;;
+		;;
 	esac
 	return 0
 }
@@ -282,7 +287,7 @@ start_redir_udp() {
 	if [ "$UDP_RELAY_SERVER" != "nil" ]; then
 		redir_udp=1
 		utype=$(nvram get ud_type)
-		log "启动 $utype 游戏 UDP 中继服务器"
+		log "正在启动 $utype 游戏 UDP 中继服务器..."
 		local bin=$(find_bin $utype)
 		[ ! -f "$bin" ] && log "UDP TPROXY Relay:Can't find $bin program, can't start!" && return 1
 		case "$utype" in
@@ -308,7 +313,7 @@ start_redir_udp() {
 			;;
 		socks5)
 			echo "1"
-		    ;;
+			;;
 		esac
 	fi
 	return 0
@@ -325,6 +330,7 @@ start_dns() {
 		dnsstr="$(nvram get tunnel_forward)"
 		dnsserver=$(echo "$dnsstr" | awk -F '#' '{print $1}')
 		#dnsport=$(echo "$dnsstr" | awk -F '#' '{print $2}')
+		ipset add gfwlist $dnsserver 2>/dev/null
 		log "启动 dns2tcp：5353 端口..."
 		dns2tcp -L"127.0.0.1#5353" -R"$dnsstr" >/dev/null 2>&1 &
 		pdnsd_enable_flag=0
@@ -338,7 +344,7 @@ start_dns() {
 		log "启动 dns2tcp：5353 端口..."
 		dns2tcp -L"127.0.0.1#5353" -R"$dnsstr" >/dev/null 2>&1 &
 		pdnsd_enable_flag=0
-		log "开始处理 gfwlist..."
+		log "开始处理 GFWList..."
 		;;
 	oversea)
 		ipset add gfwlist $dnsserver 2>/dev/null
@@ -361,22 +367,22 @@ start_AD() {
 	mkdir -p /tmp/dnsmasq.dom
 	curl -s -o /tmp/adnew.conf --connect-timeout 10 --retry 3 $(nvram get ss_adblock_url)
 	if [ ! -f "/tmp/adnew.conf" ]; then
-		log "AD文件下载失败，可能是地址失效或者网络异常！"
+		log "广告过滤功能未开启或者过滤地址失效，网络异常等 ！！！"
 	else
-		log "AD文件下载成功"
+		log "去广告文件下载成功广告过滤功能已启用..."
 		if [ -f "/tmp/adnew.conf" ]; then
 			check = `grep -wq "address=" /tmp/adnew.conf`
 	  		if [ ! -n "$check" ] ; then
-	    		cp /tmp/adnew.conf /tmp/dnsmasq.dom/ad.conf
+				cp /tmp/adnew.conf /tmp/dnsmasq.dom/anti-ad-for-dnsmasq.conf
 	  		else
-			    cat /tmp/adnew.conf | grep ^\|\|[^\*]*\^$ | sed -e 's:||:address\=\/:' -e 's:\^:/0\.0\.0\.0:' > /tmp/dnsmasq.dom/ad.conf
+			    cat /tmp/adnew.conf | grep ^\|\|[^\*]*\^$ | sed -e 's:||:address\=\/:' -e 's:\^:/0\.0\.0\.0:' > /tmp/dnsmasq.dom/anti-ad-for-dnsmasq.conf
 			fi
 		fi
 	fi
 	rm -f /tmp/adnew.conf
 }
 
-# ================================= 启动 Socks5代理 ===============================
+# ========== 启动 Socks5 代理 ==========
 start_local() {
 	local s5_port=$(nvram get socks5_port)
 	local local_server=$(nvram get socks5_enable)
@@ -452,19 +458,19 @@ auto_update() {
 	sed -i '/ss-watchcat/d' /etc/storage/cron/crontabs/$http_username
 	if [ $(nvram get ss_update_chnroute) = "1" ]; then
 		cat >>/etc/storage/cron/crontabs/$http_username <<EOF
-0 8 */10 * * /usr/bin/update_chnroute.sh > /dev/null 2>&1
+0 7 * * * /usr/bin/update_chnroute.sh > /dev/null 2>&1
 EOF
 	fi
 	if [ $(nvram get ss_update_gfwlist) = "1" ]; then
 		cat >>/etc/storage/cron/crontabs/$http_username <<EOF
-0 7 */10 * * /usr/bin/update_gfwlist.sh > /dev/null 2>&1
+0 8 * * * /usr/bin/update_gfwlist.sh > /dev/null 2>&1
 EOF
 	fi
 }
 
-# ================================= 启动 SS ===============================
+# ========== 启动 SS ==========
 ssp_start() { 
-    ss_enable=`nvram get ss_enable`
+	ss_enable=`nvram get ss_enable`
 	if rules; then
 		cgroups_init
 		if start_redir_tcp; then
@@ -478,19 +484,18 @@ ssp_start() {
 	auto_update
 	ENABLE_SERVER=$(nvram get global_server)
 	[ "$ENABLE_SERVER" = "nil" ] && return 1
-	log "启动成功。"
+	log "已启动科学上网..."
 	log "内网IP控制为: $lancons"
 	nvram set check_mode=0
-    if [ "$pppoemwan" = 0 ]; then
-        /usr/bin/detect.sh
-    fi
+	if [ "$pppoemwan" = 0 ]; then
+		/usr/bin/detect.sh
+	fi
 }
 
-# ================================= 关闭SS ===============================
-
+# ========== 关闭 SS ==========
 ssp_close() {
 	rm -rf /tmp/cdn
-	/usr/bin/ss-rules -f
+	$SS_RULES -f
 	kill -9 $(ps | grep ss-monitor | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	kill_process
 	cgroups_cleanup
@@ -505,8 +510,8 @@ ssp_close() {
 	clear_iptable
 	/sbin/restart_dhcpd
 	if [ "$pppoemwan" = 0 ]; then
-        /usr/bin/detect.sh
-    fi
+		/usr/bin/detect.sh
+	fi
 }
 
 
@@ -525,6 +530,7 @@ kill_process() {
 		killall v2ray xray >/dev/null 2>&1
 		kill -9 "$v2ray_process" >/dev/null 2>&1
 	fi
+
 	ssredir=$(pidof ss-redir)
 	if [ -n "$ssredir" ]; then
 		log "关闭 ss-redir 进程..."
@@ -538,7 +544,7 @@ kill_process() {
 		killall ssr-redir >/dev/null 2>&1
 		kill -9 "$rssredir" >/dev/null 2>&1
 	fi
-	
+
 	sslocal_process=$(pidof ss-local)
 	if [ -n "$sslocal_process" ]; then
 		log "关闭 ss-local 进程..."
@@ -573,7 +579,7 @@ kill_process() {
 		killall ssr-server >/dev/null 2>&1
 		kill -9 "$ssrs_process" >/dev/null 2>&1
 	fi
-	
+
 	cnd_process=$(pidof chinadns-ng)
 	if [ -n "$cnd_process" ]; then
 		log "关闭 chinadns-ng 进程..."
@@ -596,7 +602,7 @@ kill_process() {
 	fi
 }
 
-# ================================= 重启 SS ===============================
+# ========== 启用备用服务器 ==========
 ressp() {
 	BACKUP_SERVER=$(nvram get backup_server)
 	start_redir $BACKUP_SERVER
@@ -606,29 +612,35 @@ ressp() {
 	start_watchcat
 	auto_update
 	ENABLE_SERVER=$(nvram get global_server)
-	log "备用服务器启动成功"
+	log "备用服务器启动成功！"
 	log "内网IP控制为: $lancons"
 }
 
 case $1 in
 start)
+	if [ $(nvram get ss_adblock) = "1" ]; then
+		start_AD
+	fi
 	ssp_start
+	echo 3 > /proc/sys/vm/drop_caches
 	;;
 stop)
 	ssp_close
+	echo 3 > /proc/sys/vm/drop_caches
 	;;
 restart)
 	ssp_close
 	ssp_start
+	echo 3 > /proc/sys/vm/drop_caches
 	;;
 reserver)
 	ssp_close
 	ressp
+	echo 3 > /proc/sys/vm/drop_caches
 	;;
 *)
 	echo "check"
 	#exit 0
 	;;
 esac
-
 

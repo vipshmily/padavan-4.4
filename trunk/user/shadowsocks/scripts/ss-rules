@@ -33,7 +33,7 @@ usage() {
 		    -w <wan_ips>            wan ip of will be forwarded
 		    -p <fp_lan_ips>         lan ip of will be global proxy
 		    -G <gm_lan_ips>         lan ip of will be game mode proxy
-			-D <proxy_ports>        proxy ports
+		    -D <proxy_ports>        proxy ports
 		    -e <extra_options>      extra options for iptables
 		    -o                      apply the rules to the OUTPUT chain
 		    -O                      apply the global rules to the OUTPUT chain
@@ -82,7 +82,7 @@ flush_r() {
 }
 
 ipset_r() {
-    mkdir -p /tmp/dnsmasq.dom
+	mkdir -p /tmp/dnsmasq.dom
 	ipset -N china hash:net 2>/dev/null
 	ipset -N gmlan hash:net 2>/dev/null
 	for ip in $LAN_GM_IP; do ipset -! add gmlan $ip; done
@@ -98,9 +98,9 @@ EOF
 	$ipt_n -A SS_SPEC_WAN_AC -m set --match-set china dst -j RETURN
 	$ipt_n -A SS_SPEC_WAN_AC -m set --match-set gmlan src -m set ! --match-set china dst -j SS_SPEC_WAN_FW
 	$ipt_n -A SS_SPEC_WAN_AC -j SS_SPEC_WAN_FW
-	if [ ! -f "/etc/storage/gfwlist/gfwlist_listnew.conf" ] ; then
+	if [ ! -f "/etc/storage/gfwlist/gfwlist_list.conf" ] ; then
 	mkdir -p /etc/storage/gfwlist
-	cp -rf /etc_ro/gfwlist_list.conf /etc/storage/gfwlist/gfwlist_listnew.conf
+	cp -rf /etc_ro/gfwlist_list.conf /etc/storage/gfwlist/gfwlist_list.conf
 	fi
 	if [ ! -f "/tmp/dnsmasq.dom/gfwlist_list.conf" ] ; then
 	lua /etc_ro/ss/gfwcreate.lua
@@ -110,9 +110,9 @@ EOF
 	$ipt_n -A SS_SPEC_WAN_AC -m set --match-set china dst -j RETURN
 	$ipt_n -A SS_SPEC_WAN_AC -m set --match-set gfwlist dst -j SS_SPEC_WAN_FW
 	$ipt_n -A SS_SPEC_WAN_AC -m set --match-set gmlan src -m set ! --match-set china dst -j SS_SPEC_WAN_FW
-	if [ ! -f "/etc/storage/gfwlist/gfwlist_listnew.conf" ] ; then
+	if [ ! -f "/etc/storage/gfwlist/gfwlist_list.conf" ] ; then
 	mkdir -p /etc/storage/gfwlist
-	cp -rf /etc_ro/gfwlist_list.conf /etc/storage/gfwlist/gfwlist_listnew.conf
+	cp -rf /etc_ro/gfwlist_list.conf /etc/storage/gfwlist/gfwlist_list.conf
 	fi
 	if [ ! -f "/tmp/dnsmasq.dom/gfwlist_list.conf" ] ; then
 	lua /etc_ro/ss/gfwcreate.lua
@@ -214,7 +214,7 @@ tp_rule() {
 	fi
 
 	#$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS $lanbip \
-		#-j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 100
+	#-j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 100
 
 	if [ "$RUNMODE" = "router" ] ;then
 	$ipt_m -A SS_SPEC_TPROXY -p udp -m set --match-set ss_spec_wan_ac dst -j RETURN
@@ -245,8 +245,8 @@ tp_rule() {
 	$ipt_m -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
 	fi
 	$ipt_m -A PREROUTING -p udp -m comment --comment "$TAG" -j SS_SPEC_TPROXY
-    $ipt_m -I SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set --match-set blacklist dst \
-    -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+	$ipt_m -I SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set --match-set blacklist dst \
+	-j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
 	$ipt_m -I SS_SPEC_TPROXY -p udp -m set --match-set whitelist dst -j RETURN
 
 	return $?
@@ -360,7 +360,7 @@ while getopts ":s:l:S:L:i:e:a:b:w:p:G:D:k:oOuUfgrczh" arg; do
 			LAN_GM_IP=$(while read ip; do echo $ip; done < $OPTARG)
 			;;
 		D)
-		    PROXY_PORTS=$OPTARG
+			PROXY_PORTS=$OPTARG
 			;;
 		o)
 			OUTPUT=SS_SPEC_WAN_AC
