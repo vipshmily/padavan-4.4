@@ -1,7 +1,9 @@
 PROG        = usb_modeswitch
-VERS        = 2.5.2
+VERS        = 2.6.0
 CC          ?= gcc
 CFLAGS     += -I$(STAGEDIR)/include/libusb-1.0
+CFLAGS     += -Wall -ffunction-sections -fdata-sections -fvisibility=hidden
+LDFLAGS    += -Wl,--gc-sections
 LIBS        = -lusb-1.0
 RM          = /bin/rm -f
 OBJS        = usb_modeswitch.c
