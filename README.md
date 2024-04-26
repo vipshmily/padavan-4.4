@@ -32,24 +32,50 @@ This project is based on original rt-n56u with latest mtk 4.4.198 kernel, which 
 - Support LED&GPIO control via sysfs
 
 # Supported devices
-
+- 360-T6M (from https://github.com/BINGHUAice/padavan-4.4，没有机器测试，自行判断)
+- B70
+- BELL-A040WQ
+- C-Life-XG1 (from https://github.com/vb1980/padavan-4.4, 没有机器测试，自行判断)
 - CR660x
-- JCG-Q20
-- JCG-AC860M
-- JCG-836PRO
-- JCG-Y2
 - DIR-878
 - DIR-882
+- EA7500 (from https://github.com/MNM28/padavan-4.4, 没有机器测试，自行判断)
+- G-AX1800 (from https://github.com/ddyjyj/padavan-4.4, 富春江G-AX1800, 自测可用)
+- GHL (from https://github.com/fangenhui520/padavan-4.4, 没有机器测试，自行判断)
+- HAR-20S2U1 (from https://github.com/vb1980/padavan-4.4, 没有机器测试，自行判断)
+- JDCloud RE-CP-02 (无线宝鲁班, from https://github.com/240038901/padavan-4.4, 没有机器测试，自行判断)
+- JDCloud RE-SP-01B (from https://github.com/MeIsReallyBa/padavan-4.4, 没有机器测试，自行判断)
+- JCG-836PRO
+- JCG-AC860M
+- JCQ-Q11Pro (from https://github.com/qewwqewq22/padavan11, 没有机器测试，自行判断)
+- JCG-Q20
+- JCG-Y2
 - K2P
 - K2P-USB
-- NETGEAR-BZV
-- MR2600
 - MI-4
 - MI-R3G
 - MI-R3P
+- MI-R4A (from https://github.com/vipshmily/padavan-4.4, 自测可用)
+- MR2600
+- MSG1500
+- MSG1500-Z (from https://github.com/TurBoTse/padavan, 自测可用)
+- NETGEAR-BZV
+- NETGEAR-R6800 (from https://github.com/MNM28/padavan-4.4, 没有机器测试，自行判断)
+- NETGEAR-R7450 (from https://github.com/vipshmily/padavan-4.4, 自测可用)
+- NEWIFI
+- NEWIFI3 (from https://github.com/GH-X/padavan-4.4, 必须拆除主板上编号为C48的电容(位于CPU旁边), 否则外网(WAN)将不能正常工作)
+- QM-B1 (from https://github.com/monw/padavan, 没有机器测试，自行判断)
 - R2100
+- RM2100
+- RT-AC85P
+- SIM-AX1800T (from https://github.com/vb1980/padavan-4.4, 没有机器测试，自行判断)
+- TX1801 Plus (from https://github.com/MNM28/padavan-4.4, 没有机器测试，自行判断)
+- WE410443-TC (from https://github.com/akw28888/padavan-4.4, 没有机器测试，自行判断)
+- WIA3300-10 (from https://github.com/vb1980/padavan-4.4, 西加云杉WIA3300-10，自测可用)
+- WR1200JS
 - XY-C1
-
+- ZTE-E8820S
+- ZTE-E8820V2
 # Compilation steps
 
 - Install dependencies
@@ -82,7 +108,7 @@ This project is based on original rt-n56u with latest mtk 4.4.198 kernel, which 
     ```
 - Clone source code
   ```sh
-  git clone https://github.com/tsl0922/padavan.git
+  git clone https://github.com/TurBoTse/padavan.git
   ```
 - Modify template file and start compiling
   ```sh
