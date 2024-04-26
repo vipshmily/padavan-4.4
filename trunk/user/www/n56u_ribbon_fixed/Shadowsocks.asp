@@ -28,6 +28,7 @@
 		var node_global_max = 0;
 		<% shadowsocks_status(); %>
 		<% dns2tcp_status(); %>
+		<% dnsproxy_status(); %>
 		<% rules_count(); %>
 		node_global_max = 0;
 		editing_ss_id = 0;
@@ -119,7 +120,13 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 			show_menu(13, 13, 0);
 			show_footer();
 			fill_ss_status(shadowsocks_status());
-			fill_dns2tcp_status(dns2tcp_status())
+			fill_dns2tcp_status(dns2tcp_status());
+			fill_dnsproxy_status(dnsproxy_status());
+			var wan0_dns = '<% nvram_get_x("","wan0_dns"); %>';
+			// use local DNS
+			if (wan0_dns.length > 0){
+					$j("select[name='china_dns']").prepend($j('<option value="'+wan0_dns+'" selected>本地DNS ' + wan0_dns + '</option>'));
+			}
 			$("chnroute_count").innerHTML = '<#menu5_17_3#>' + chnroute_count();
 			$("gfwlist_count").innerHTML = '<#menu5_17_3#>' + gfwlist_count();
 			switch_ss_type();
@@ -312,16 +319,11 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 		}
 		function switch_dns() {
 			var b = document.form.pdnsd_enable.value;
-			if (b == "0") {
+			if (b == "0" || b == "1") { 
 				showhide_div('row_china_dns', 1);
 				showhide_div('row_tunnel_forward', 1);
 				showhide_div('row_ssp_dns_ip', 0);
 				showhide_div('row_ssp_dns_port', 0);
-			} else if (b == "1") {
-				showhide_div('row_china_dns', 0);
-				showhide_div('row_tunnel_forward', 0);
-				showhide_div('row_ssp_dns_ip', 1);
-				showhide_div('row_ssp_dns_port', 1);
 			} else if (b == "2") {
 				showhide_div('row_china_dns', 0);
 				showhide_div('row_tunnel_forward', 0);
@@ -383,6 +385,15 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 			else if (status_code == 1)
 				stext = "<#Running#>";
 			$("dns2tcp_status").innerHTML = '<span class="label label-' + (status_code != 0 ? 'success' : 'warning') + '">' +
+				stext + '</span>';
+		}
+		function fill_dnsproxy_status(status_code) {
+			var stext = "Unknown";
+			if (status_code == 0)
+				stext = "<#Stopped#>";
+			else if (status_code == 1)
+				stext = "<#Running#>";
+			$("dnsproxy_status").innerHTML = '<span class="label label-' + (status_code != 0 ? 'success' : 'warning') + '">' +
 				stext + '</span>';
 		}
 		var arrHashes = ["cfg", "add", "ssl", "cli", "log", "help"];
@@ -1657,11 +1668,11 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 														</td>
 													</tr>
 													<tr id="row_pdnsd_enable">
-														<th width="50%">DNS解析方式：</th>
+														<th width="50%">DNS代理解析方式：(推荐dnsproxy)</th>
 														<td>
 															<select name="pdnsd_enable" id="pdnsd_enable" class="input" style="width: 200px;" onchange="switch_dns()">
-																<option value="0">使用dns2tcp查询</option>
-																<option value="1">使用其它服务器查询</option>
+																<option value="0">使用dnsproxy查询</option>
+																<option value="1">使用dns2tcp查询</option>
 															</select>
 														</td>
 													</tr>
