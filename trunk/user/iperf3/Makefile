@@ -1,4 +1,4 @@
-SRC_NAME = iperf-3.16
+SRC_NAME = iperf-3.15
 SRC_URL = https://downloads.es.net/pub/iperf/$(SRC_NAME).tar.gz
 THISDIR = $(shell pwd)
 
@@ -42,4 +42,4 @@ clean:
 
 romfs:
 	$(ROMFSINST) -p +x $(THISDIR)/$(SRC_NAME)/src/iperf3 /usr/bin/iperf3
-
+	$(ROMFSINST) -p +x $(THISDIR)/iperf3.sh /usr/bin/iperf3.sh
