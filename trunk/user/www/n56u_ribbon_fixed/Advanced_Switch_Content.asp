@@ -252,7 +252,7 @@ function done_validating(action){
                                             </td>
                                         </tr>
                                         <tr id="row_ether_green">
-                                            <th width="50%"><#btn_Enable#> Green Ethernet?</th>
+                                            <th width="50%"><#btn_Enable#> <#SwitchGreenEth#></th>
                                             <td>
                                                 <div class="main_itoggle">
                                                     <div id="ether_green_on_of">

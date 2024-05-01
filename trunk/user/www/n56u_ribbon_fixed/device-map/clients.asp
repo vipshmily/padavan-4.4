@@ -389,7 +389,7 @@ function networkmap_update(s){
         <tr>
             <th width="10%"><a href="javascript:sort(0)"><#Type#></a></th>
             <th id="col_hname" width="35%"><a href="javascript:sort(1)"><#Computer_Name#></a></th>
-            <th width="20%"><a href="javascript:sort(2)"><#LAN_IP#></a></th>
+            <th width="20%"><a href="javascript:sort(2)"><#IP_Address#></a></th>
             <th width="24%"><a href="javascript:sort(3)"><#MAC_Address#></a></th>
             <th id="col_rssi"><a href="javascript:sort(4)"><#Rssi#></a></th>
             <th id="col_block"></th>
@@ -408,7 +408,7 @@ function networkmap_update(s){
         <tr>
             <th width="10%"><#Type#></th>
             <th id="col_unhname" width="35%"><#Computer_Name#></th>
-            <th width="20%"><#LAN_IP#></th>
+            <th width="20%"><#IP_Address#></th>
             <th width="24%"><#MAC_Address#></th>
             <th id="col_unrssi"><#Rssi#></th>
             <th id="col_unblock"></th>

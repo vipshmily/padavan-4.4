@@ -27,6 +27,7 @@
 			gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
 		};
 	};
+
 };
 
 &pcie {

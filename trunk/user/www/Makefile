@@ -6,8 +6,8 @@ ROMFS_DIR = $(ROOTDIR)/romfs
 
 include $(ROOTDIR)/user/shared/boards.mk
 
-PROJECT_HOME_URL="https:\/\/bitbucket.org\/padavan\/rt-n56u\/"
-PROJECT_HOME_URL_MOD="https:\/\/github.com\/tsl0922\/padavan\/"
+PROJECT_HOME_URL="https:\/\/github.com\/hanwckf\/padavan-4.4\/"
+PROJECT_HOME_URL_MOD="https:\/\/github.com\/TurBoTse\/padavan\/"
 
 LABEL_COPYRIGHT_TEXT='© 2011-2024 <a href="https:\/\/bitbucket.org\/padavan\/rt-n56u" target="blank">Padavan<\/a> \& N56U project community \& <a href="https:\/\/github.com\/hanwckf\/rt-n56u" target="blank">hanwckf<\/a> \& <a href="https:\/\/github.com\/TurBoTse\/padavan" target="blank">TurBoTse<\/a>'
 
