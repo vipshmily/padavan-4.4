@@ -2406,8 +2406,11 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 														</td>
 													</tr>
 													<tr>
-														<td style="padding-bottom: 0px;">
-															<center><input type="button" id="btn_reconnect" class="btn btn-info" value=<#CTL_refresh#> onclick="window.location.reload();"></center>
+														<td>
+															<center>
+																<input type="button" id="btn_clearLog" class="btn btn-info" style="width: 200px" value=<#CTL_clear#> onClick="clearLog();">
+																<input type="button" id="btn_reconnect" class="btn btn-info" style="width: 200px" value=<#CTL_refresh#> onclick="window.location.reload();">
+															</center>
 														</td>
 													</tr>
 												</table>

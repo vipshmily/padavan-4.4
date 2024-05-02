@@ -433,6 +433,34 @@ function on_ttyd_link(){
                                         <tr>
                                             <th colspan="2" style="background-color: #E3E3E3;"><#Adm_System_term#></th>
                                         </tr>
+                                        <tr id="div_vlmcsd">
+                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,23,2);"><#Adm_Svc_vlmcsd#></a></th>
+                                            <td>
+                                                <div class="main_itoggle">
+                                                    <div id="vlmcsd_enable_on_of">
+                                                        <input type="checkbox" id="vlmcsd_enable_fake" <% nvram_match_x("", "vlmcsd_enable", "1", "value=1 checked"); %><% nvram_match_x("", "vlmcsd_enable", "0", "value=0"); %>>
+                                                    </div>
+                                                </div>
+                                                <div style="position: absolute; margin-left: -10000px;">
+                                                    <input type="radio" name="vlmcsd_enable" id="vlmcsd_enable_1" class="input" value="1" <% nvram_match_x("", "vlmcsd_enable", "1", "checked"); %>/><#checkbox_Yes#>
+                                                    <input type="radio" name="vlmcsd_enable" id="vlmcsd_enable_0" class="input" value="0" <% nvram_match_x("", "vlmcsd_enable", "0", "checked"); %>/><#checkbox_No#>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr id="row_iperf3">
+                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,23,3);"><#Adm_Svc_iperf3#></a></th>
+                                            <td>
+                                                <div class="main_itoggle">
+                                                    <div id="iperf3_enable_on_of">
+                                                        <input type="checkbox" id="iperf3_enable_fake" <% nvram_match_x("", "iperf3_enable", "1", "value=1 checked"); %><% nvram_match_x("", "iperf3_enable", "0", "value=0"); %>>
+                                                    </div>
+                                                </div>
+                                                <div style="position: absolute; margin-left: -10000px;">
+                                                    <input type="radio" name="iperf3_enable" id="iperf3_enable_1" class="input" value="1" <% nvram_match_x("", "iperf3_enable", "1", "checked"); %>/><#checkbox_Yes#>
+                                                    <input type="radio" name="iperf3_enable" id="iperf3_enable_0" class="input" value="0" <% nvram_match_x("", "iperf3_enable", "0", "checked"); %>/><#checkbox_No#>
+                                                </div>
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <th width="50%"><#Adm_System_telnetd#></th>
                                             <td>
@@ -451,8 +479,8 @@ function on_ttyd_link(){
                                             <th><#Adm_System_sshd#></th>
                                             <td>
                                                 <select name="sshd_enable" class="input" onchange="sshd_auth_change();">
-                                                    <option value="0" <% nvram_match_x("", "sshd_enable", "0","selected"); %>><#checkbox_No#> (*)</option>
-                                                    <option value="1" <% nvram_match_x("", "sshd_enable", "1","selected"); %>><#checkbox_Yes#></option>
+                                                    <option value="0" <% nvram_match_x("", "sshd_enable", "0","selected"); %>><#checkbox_No#></option>
+                                                    <option value="1" <% nvram_match_x("", "sshd_enable", "1","selected"); %>><#checkbox_Yes#> (*)</option>
                                                     <option value="2" <% nvram_match_x("", "sshd_enable", "2","selected"); %>><#checkbox_Yes#> (authorized_keys only)</option>
                                                 </select>
                                             </td>
@@ -512,7 +540,7 @@ function on_ttyd_link(){
                                             <th colspan="2" style="background-color: #E3E3E3;"><#Adm_Svc_ttyd_setup#></th>
                                         </tr>
                                         <tr id="div_ttyd">
-                                            <th width="50%"><#Adm_Svc_ttyd_enable#></th>
+                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,23,4);"><#Adm_Svc_ttyd_enable#></a></th>
                                             <td colspan="2">
                                                 <div class="main_itoggle">
                                                     <div id="ttyd_enable_on_of">
@@ -540,34 +568,6 @@ function on_ttyd_link(){
                                     <table width="100%" cellpadding="4" cellspacing="0" class="table">
                                         <tr>
                                             <th colspan="2" style="background-color: #E3E3E3;"><#Adm_System_misc#></th>
-                                        </tr>
-                                        <tr id="div_vlmcsd">
-                                            <th width="50%"><#Adm_Svc_vlmcsd#></th>
-                                            <td>
-                                                <div class="main_itoggle">
-                                                    <div id="vlmcsd_enable_on_of">
-                                                        <input type="checkbox" id="vlmcsd_enable_fake" <% nvram_match_x("", "vlmcsd_enable", "1", "value=1 checked"); %><% nvram_match_x("", "vlmcsd_enable", "0", "value=0"); %>>
-                                                    </div>
-                                                </div>
-                                                <div style="position: absolute; margin-left: -10000px;">
-                                                    <input type="radio" name="vlmcsd_enable" id="vlmcsd_enable_1" class="input" value="1" <% nvram_match_x("", "vlmcsd_enable", "1", "checked"); %>/><#checkbox_Yes#>
-                                                    <input type="radio" name="vlmcsd_enable" id="vlmcsd_enable_0" class="input" value="0" <% nvram_match_x("", "vlmcsd_enable", "0", "checked"); %>/><#checkbox_No#>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr id="row_iperf3">
-                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,23,1);"><#Adm_Svc_iperf3#></a></th>
-                                            <td>
-                                                <div class="main_itoggle">
-                                                    <div id="iperf3_enable_on_of">
-                                                        <input type="checkbox" id="iperf3_enable_fake" <% nvram_match_x("", "iperf3_enable", "1", "value=1 checked"); %><% nvram_match_x("", "iperf3_enable", "0", "value=0"); %>>
-                                                    </div>
-                                                </div>
-                                                <div style="position: absolute; margin-left: -10000px;">
-                                                    <input type="radio" name="iperf3_enable" id="iperf3_enable_1" class="input" value="1" <% nvram_match_x("", "iperf3_enable", "1", "checked"); %>/><#checkbox_Yes#>
-                                                    <input type="radio" name="iperf3_enable" id="iperf3_enable_0" class="input" value="0" <% nvram_match_x("", "iperf3_enable", "0", "checked"); %>/><#checkbox_No#>
-                                                </div>
-                                            </td>
                                         </tr>
                                         <tr>
                                             <th><#Adm_Svc_lltd#></th>
@@ -620,7 +620,7 @@ function on_ttyd_link(){
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,23,2);"><#TweaksWdg#></a></th>
+                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,23,1);"><#TweaksWdg#></a></th>
                                             <td>
                                                 <div class="main_itoggle">
                                                     <div id="watchdog_cpu_on_of">
