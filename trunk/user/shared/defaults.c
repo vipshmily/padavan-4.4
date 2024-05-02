@@ -25,7 +25,7 @@
 
 struct nvram_pair router_defaults[] = {
 	/* Restore defaults */
-	{ "restore_defaults", "0" },    /* Set to 0 to not restore defaults on boot */
+	{ "restore_defaults", "0" },		/* Set to 0 to not restore defaults on boot */
 	{ "nvram_manual", "0" },		/* Manual commit mode: 1: manual, 0: auto */
 
 #if defined (USE_NAND_FLASH)
@@ -34,12 +34,12 @@ struct nvram_pair router_defaults[] = {
 
 	/* Miscellaneous parameters */
 	{ "time_zone", DEF_TIMEZONE },
-	{ "preferred_lang", "CN" },
+        { "preferred_lang", "CN" },
 	{ "log_float_ui", "0" },		/* WebUI syslog float panel mode */
 	{ "log_ipaddr", "" },			/* syslog recipient IP */
 	{ "log_port", "514" },			/* syslog recipient Port */
 	{ "log_level", "0" },			/* Bitmask 0:off 1:denied 2:accepted */
-	{ "console_loglevel", "7" },	/* Kernel panics only */
+	{ "console_loglevel", "7" },		/* Kernel panics only */
 	{ "stats_server", "" },			/* URL for posting stats */
 
 	/* Big switches */
@@ -51,29 +51,29 @@ struct nvram_pair router_defaults[] = {
 	/* LAN TCP/IP parameters */
 	{ "lan_proto_x", "1" },			/* DHCP client [static|dhcp] in AP mode */
 	{ "lan_dhcpd_x", "0" },			/* DHCP server in AP mode */
-	{ "lan_ipaddr", DEF_LAN_ADDR },	/* LAN IP address */
-	{ "lan_netmask", DEF_LAN_MASK },/* LAN netmask */
-	{ "lan_gateway", DEF_LAN_ADDR },/* LAN gateway */
-	{ "lan_dns_x", "1" },		/* LAN DNS [static|dhcp] */
+	{ "lan_ipaddr", DEF_LAN_ADDR },		/* LAN IP address */
+	{ "lan_netmask", DEF_LAN_MASK },	/* LAN netmask */
+	{ "lan_gateway", DEF_LAN_ADDR },	/* LAN gateway */
+	{ "lan_dns_x", "1" },			/* LAN DNS [static|dhcp] */
 	{ "lan_dns1", "" },			/* LAN DNS1 */
 	{ "lan_dns2", "" },			/* LAN DNS2 */
-	{ "lan_domain", "lan" },	/* LAN domain name */
+	{ "lan_domain", "lan" },		/* LAN domain name */
 	{ "lan_stp", "1" },			/* LAN spanning tree protocol */
 
 	/* WAN H/W parameters */
-	{ "wan_ifname", IFNAME_WAN },	/* WAN interface name */
+	{ "wan_ifname", IFNAME_WAN },		/* WAN interface name */
 	{ "wan_hwaddr", "" },			/* WAN interface MAC address */
 
 	/* WAN TCP/IP parameters */
 	{ "wan_proto", "dhcp" },		/* [static|dhcp|pppoe|pptp|l2tp|disabled] */
-	{ "wan_ipaddr", "0.0.0.0" },	/* WAN IP address */
-	{ "wan_netmask", "0.0.0.0" },	/* WAN netmask */
-	{ "wan_gateway", "0.0.0.0" },	/* WAN gateway */
+	{ "wan_ipaddr", "0.0.0.0" },		/* WAN IP address */
+	{ "wan_netmask", "0.0.0.0" },		/* WAN netmask */
+	{ "wan_gateway", "0.0.0.0" },		/* WAN gateway */
 	{ "wan_dnsenable_x", "1" },
 	{ "wan_dns1_x", "" },
 	{ "wan_dns2_x", "" },
 	{ "wan_dns3_x", "" },
-	{ "wan_hostname", "" },		/* WAN hostname */
+	{ "wan_hostname", "" },			/* WAN hostname */
 	{ "wan_vci", "" },			/* WAN vendor class identifier (OPT-60) */
 	{ "wan_ttl_fix", "0" },
 	{ "wan_ttl_value", "0" },
@@ -114,21 +114,21 @@ struct nvram_pair router_defaults[] = {
 	{ "viptv_gateway", "0.0.0.0" },
 
 	/* PPP VPN parameters */
-	{ "wan_pppoe_mwanenable", "0" },/* MWAN support */
+	{ "wan_pppoe_mwanenable", "0" },		/* MWAN support */
 	{ "wan_pppoe_sync", "1" },		/* PPP sync support */
 	{ "wan_pppoe_num", "1" },		/* PPP username */
-	{ "wan_pppoe_username", "" },	/* PPP username */
-	{ "wan_pppoe_passwd", "" },	    /* PPP password */
-	{ "wan_pppoe_idletime", "0" },	/* PPP idle time */
-	{ "wan_pppoe_demand", "0" },	/* Dial on demand */
+	{ "wan_pppoe_username", "" },		/* PPP username */
+	{ "wan_pppoe_passwd", "" },		/* PPP password */
+	{ "wan_pppoe_idletime", "0" },		/* PPP idle time */
+	{ "wan_pppoe_demand", "0" },		/* Dial on demand */
 	{ "wan_pppoe_txonly_x", "0" },
-	{ "wan_pppoe_service", "" },	/* PPPoE service name */
+	{ "wan_pppoe_service", "" },		/* PPPoE service name */
 	{ "wan_pppoe_ac", "" },			/* PPPoE access concentrator name */
 	{ "wan_pppoe_man", "1" },		/* PPPoE & MAN */
 	{ "pppoemwan_staticnum_x", "0" },
 	{ "pppoemwan_443", "0" },
-	{ "wan_pppoe_mtu", "1492" },	/* Negotiate MTU to the smaller of this value or the peer MRU */
-	{ "wan_pppoe_mru", "1492" },	/* Negotiate MRU to this value */
+	{ "wan_pppoe_mtu", "1492" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
+	{ "wan_pppoe_mru", "1492" },		/* Negotiate MRU to this value */
 	{ "wan_pptp_mtu", "1400" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
 	{ "wan_pptp_mru", "1400" },		/* Negotiate MRU to this value */
 	{ "wan_l2tp_mtu", "1460" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
@@ -139,7 +139,7 @@ struct nvram_pair router_defaults[] = {
 	{ "wan_ppp_peer", "" },			/* VPN server address */
 	{ "wan_ppp_auth", "0" },		/* PPP authentication */
 	{ "wan_ppp_mppe", "0" },		/* MPPE encryption */
-	{ "wan_ppp_lcp", "1" },			/* Automatically send LCP requests */
+	{ "wan_ppp_lcp", "1" },                 /* Automatically send LCP requests */
 	{ "wan_ppp_alcp", "0" },		/* Adaptive LCP Echo */
 	{ "wan_ppp_pppd", "" },			/* Custom PPPD options */
 
@@ -147,7 +147,7 @@ struct nvram_pair router_defaults[] = {
 	{ "dmz_ip", "" },
 
 	/* Web server parameters */
-	{ "http_username", SYS_USER_ROOT },		/* Username */
+	{ "http_username", SYS_USER_ROOT },	/* Username */
 	{ "http_passwd", DEF_ROOT_PASSWORD },	/* Password */
 	{ "http_access", "2" },			/* HTTP access (0: ALL, 1: LAN only, 2: LAN + Wireless MainAP) */
 	{ "http_proto", "0" },			/* HTTP proto (0: HTTP, 1: HTTPS, 2: Both) */
@@ -161,7 +161,7 @@ struct nvram_pair router_defaults[] = {
 
 #if BOARD_HAS_5G_RADIO
 	/* 5GHz Wireless parameters */
-	{ "wl_country_code", DEF_WLAN_5G_CC },	/* Country Code (default obtained from driver) */
+	{ "wl_country_code", DEF_WLAN_5G_CC },		/* Country Code (default obtained from driver) */
 	{ "wl_ssid", DEF_WLAN_5G_SSID },		/* Service set ID (network name) */
 #if defined(BOARD_HAS_5G_11AX) && BOARD_HAS_5G_11AX
 	{ "wl_gmode", "5" },			/* A/N/AC/AX Mixed */
@@ -173,30 +173,30 @@ struct nvram_pair router_defaults[] = {
 	{ "wl_mcs_mode", "0" },
 	{ "wl_channel", "0" },			/* Channel number */
 	{ "wl_bcn", "100" },			/* Beacon interval */
-	{ "wl_dtim", "1" },			    /* DTIM period */
+	{ "wl_dtim", "1" },			/* DTIM period */
 	{ "wl_rts", "2347" },			/* RTS threshold */
 	{ "wl_frag", "2346" },			/* Fragmentation threshold */
 	{ "wl_ap_isolate", "0" },		/* AP isolate mode */
 	{ "wl_closed", "0" },			/* Closed (hidden) network */
-	{ "wl_macmode", "disabled" },	/* "allow" only, "deny" only, or "disabled"(allow all) */
+	{ "wl_macmode", "disabled" },		/* "allow" only, "deny" only, or "disabled"(allow all) */
 	{ "wl_maclist", "" },			/* xx:xx:xx:xx:xx:xx ... */
-	{ "wl_wme", "1" },			    /* WME mode (off|on) */
+	{ "wl_wme", "1" },			/* WME mode (off|on) */
 	{ "wl_wme_no_ack", "off" },		/* WME No-Acknowledgment mode */
 	{ "wl_auth_mode", "psk" },		/* Network authentication mode: WPAx Personal */
-	{ "wl_key", "1" },				/* Current WEP key */
-	{ "wl_key1", "" },				/* 5/13 char ASCII or 10/26 char hex */
-	{ "wl_key2", "" },				/* 5/13 char ASCII or 10/26 char hex */
-	{ "wl_key3", "" },				/* 5/13 char ASCII or 10/26 char hex */
-	{ "wl_key4", "" },				/* 5/13 char ASCII or 10/26 char hex */
+	{ "wl_key", "1" },			/* Current WEP key */
+	{ "wl_key1", "" },			/* 5/13 char ASCII or 10/26 char hex */
+	{ "wl_key2", "" },			/* 5/13 char ASCII or 10/26 char hex */
+	{ "wl_key3", "" },			/* 5/13 char ASCII or 10/26 char hex */
+	{ "wl_key4", "" },			/* 5/13 char ASCII or 10/26 char hex */
 	{ "wl_key_type", "0" } ,		/* WEP key format (HEX/ASCII)*/
 	{ "wl_mrate", "2" },			/* Mcast Rate */
 	{ "wl_crypto", "aes" },			/* WPA data encryption */
-	{ "wl_wpa_psk", DEF_WLAN_5G_PSK },	/* WPA pre-shared key */
+	{ "wl_wpa_psk", DEF_WLAN_5G_PSK },			/* WPA pre-shared key */
 	{ "wl_wpa_gtk_rekey", "3600" },		/* GTK rotation interval */
-	{ "wl_radius_ipaddr", ""},			/* RADIUS server IP address */
+	{ "wl_radius_ipaddr", ""},		/* RADIUS server IP address */
 	{ "wl_radius_port", "1812" },		/* RADIUS server UDP port */
-	{ "wl_radius_key", "" },			/* RADIUS shared secret */
-	{ "wl_radio_x", "1" },				/* Enable (1) or disable (0) radio */
+	{ "wl_radius_key", "" },		/* RADIUS shared secret */
+	{ "wl_radio_x", "1" },			/* Enable (1) or disable (0) radio */
 	{ "wl_IgmpSnEnable", "1" },
 	{ "wl_TxPower", "100" },
 	{ "wl_TxBurst", "1" },
@@ -210,7 +210,7 @@ struct nvram_pair router_defaults[] = {
 #endif
 	{ "wl_txbf", "1" },
 	{ "wl_ssid2",  DEF_WLAN_5G_SSID },
-	{ "wl_mode_x", "0" },		/* 5GHz Wireless Bridge Mode */
+	{ "wl_mode_x", "0" },                  /* 5GHz Wireless Bridge Mode */
 	{ "wl_wdsapply_x", "0" },
 	{ "wl_wdsnum_x", "0" },
 	{ "wl_wep_x", "0" },
@@ -225,19 +225,19 @@ struct nvram_pair router_defaults[] = {
 	{ "wl_stream_tx", STR(BOARD_NUM_ANT_5G_TX) },
 	{ "wl_stream_rx", STR(BOARD_NUM_ANT_5G_RX) },
 	{ "wl_preamble", "1" },
-	{ "wl_greenap", "0" },		/* 5GHz GreenAP */
+	{ "wl_greenap", "0" },                 /* 5GHz GreenAP */
 	{ "wl_ldpc", "3" },
 	{ "wl_HT_RDG", "0" },
 #if defined (USE_WID_5G) && (USE_WID_5G==7615 || USE_WID_5G==7915)
 	{ "wl_HT_AMSDU", "1" },
 	{ "wl_HT_BAWinSize", "256" },
 	{ "wl_mumimo", "1" },
-	{ "wl_band_steering", "0" },		/* band steering AP 5Ghz */
+	{ "wl_band_steering", "0" },           /* band steering AP 5Ghz */
 #else
 	{ "wl_HT_AMSDU", "0" },
 	{ "wl_HT_BAWinSize", "64" },
 #endif
-	{ "wl_HT_80211KV", "0" },
+	{ "wl_HT_80211KV", "1" },
 	{ "wl_HT_80211R", "0" },
 	{ "wl_HT_MpduDensity", "5" },
 	{ "wl_HT_AutoBA", "1" },
@@ -278,17 +278,17 @@ struct nvram_pair router_defaults[] = {
 #if defined(BOARD_HAS_2G_11AX) && BOARD_HAS_2G_11AX
 	{ "rt_gmode", "6" },			/* b/g/n/ax mixed */
 #else
-	{ "rt_gmode", "5" },			/* g/n mixed */
+	{ "rt_gmode", "3" },			/* n Olny */	
 #endif
 	{ "rt_mcs_mode", "0" },
-	{ "rt_channel", "0" },			/* Channel number */
+	{ "rt_channel", "0" },                  /* Channel number */
 	{ "rt_bcn", "100" },
 	{ "rt_dtim", "1" },
 	{ "rt_gmode_protection", "auto" },
 	{ "rt_rts", "2347" },
 	{ "rt_frag", "2346" },
 	{ "rt_ap_isolate", "0" },
-	{ "rt_closed", "0" },			/* Closed (hidden) network */
+	{ "rt_closed", "0" },                   /* Closed (hidden) network */
 	{ "rt_macmode", "disabled" },
 	{ "rt_mrate", "2" },
 	{ "rt_mode", "ap" },
@@ -317,7 +317,7 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_radius_key", "" },
 	{ "rt_radio_x", "1" },
 	{ "rt_ssid2", DEF_WLAN_2G_SSID },
-	{ "rt_mode_x", "0" },		/* 2.4GHz Wireless Bridge Mode */
+	{ "rt_mode_x", "0" },                  /* 2.4GHz Wireless Bridge Mode */
 	{ "rt_wdsapply_x", "0" },
 	{ "rt_wdsnum_x", "0" },
 	{ "rt_wep_x", "0" },
@@ -332,13 +332,13 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_stream_tx", STR(BOARD_NUM_ANT_2G_TX) },
 	{ "rt_stream_rx", STR(BOARD_NUM_ANT_2G_RX) },
 	{ "rt_preamble", "1" },
-	{ "rt_greenap", "0" },		/* 2.4GHz GreenAP */
+	{ "rt_greenap", "0" },                 /* 2.4GHz GreenAP */
 	{ "rt_HT_RDG", "0" },
 	{ "rt_HT_AMSDU", "1" },
-	{ "rt_HT_80211KV", "0" },
+	{ "rt_HT_80211KV", "1" },
 	{ "rt_HT_80211R", "0" },
 	{ "rt_HT_MpduDensity", "5" },
-	{ "rt_band_steering", "0" },	/* band steering AP 2.4Ghz */
+	{ "rt_band_steering", "0" },           /* band steering AP 2.4Ghz */
 #if defined (USE_WID_2G) && (USE_WID_2G==7615 || USE_WID_2G==7915)
 	{ "rt_HT_BAWinSize", "256" },
 	{ "rt_ldpc", "1" },
@@ -440,12 +440,12 @@ struct nvram_pair router_defaults[] = {
 	{ "ip6_wan_size", "64" },
 	{ "ip6_wan_gate", "" },
 
-	{ "ip6_dns_auto", "1" },
+	{ "ip6_dns_auto", "0" },
 	{ "ip6_dns1", "" },
 	{ "ip6_dns2", "" },
 	{ "ip6_dns3", "" },
 
-	{ "ip6_lan_auto", "1" },
+	{ "ip6_lan_auto", "0" },
 	{ "ip6_lan_addr", "fc00:101:101::1" },
 	{ "ip6_lan_size", "64" },
 	{ "ip6_lan_radv", "1" },
@@ -554,6 +554,7 @@ struct nvram_pair router_defaults[] = {
 	/* vlmcsd */
 	{ "vlmcsd_enable", "0" },
 #endif
+
 #if defined (APP_IPERF3)
 	/* iperf3 */
 	{ "iperf3_enable", "0" },
@@ -569,43 +570,45 @@ struct nvram_pair router_defaults[] = {
 
 #if defined(APP_SHADOWSOCKS)
 	/* shadowsocks */
-	{ "ss_enable", "0" },
-	{ "global_server", "nil" }, 	//nil 停用
-	{ "udp_relay_server", "nil" }, 	//nil 停用 same 与主服务相同
+	{ "ss_type", "0" },
+	{ "global_server", "nil" },
+	{ "backup_server", "nil" },
+	{ "udp_relay_server", "nil" },
 	{ "ss_threads", "0" },
-	{ "ss_run_mode", "gfw" }, 	 	//gfw router all oversea
-	{ "s_dports", "0" },
-	{ "lan_con", "0" },
+	{ "ss_run_mode", "gfw" },
 	{ "pdnsd_enable", "0" },
-	{ "ss_chdns", "0" },
+	{ "s_dports", "0" },
+	{ "ssp_local_port", "1080" },
 	{ "china_dns", "223.5.5.5#53" },
 	{ "tunnel_forward", "8.8.8.8#53" },
+	{ "ssp_dns_ip", "2" },
+	{ "socks5_enable", "0" },
+	{ "socks5_wenable", "0" },
+	{ "socks5_port", "1088" },
+	{ "socks5_aenable", "0" },
+	{ "socks5_s_username", "" },
+	{ "socks5_s_password", "" },
 	{ "ss_cgroups", "0" },
 	{ "ss_cgoups_cpu_s", "512" },
 	{ "ss_cgoups_mem_s", "20M" },
-	{ "ss_watchcat", "0" },
-	{ "socks5_enable", "nil" }, 	//nil 停用 same 与主服务相同
-	{ "socks5_port", "1088" },
+	{ "ss_watchcat", "1" },
+	{ "lan_con", "0" },
 	{ "ss_adblock", "0" },
 	{ "ss_adblock_url", "https://anti-ad.net/anti-ad-for-dnsmasq.conf"},
 	{ "ss_update_chnroute", "1" },
 	{ "ss_chnroute_url", "https://ispip.clang.cn/all_cn.txt"},
 	{ "ss_update_gfwlist", "1" },
 	{ "ss_gfwlist_url", "https://cdn.jsdelivr.net/gh/YW5vbnltb3Vz/domain-list-community@release/gfwlist.txt"},
-	{ "ss_type", "0" },
-	{ "backup_server", "nil" },
-	{ "ssp_local_port", "1080" },
-	{ "ssp_dns_ip", "2" },
-	{ "socks5_s_username", "" },
-	{ "socks5_s_password", "" },
 	{ "ss_schedule_enable", "0" },
 	{ "ss_schedule", "00000000000" },
 
+	{ "ss_enable", "0" },
 	{ "ss_mode", "1" },
 	{ "ss_server", "127.0.0.1" },
 	{ "ss_server_port", "8989" },
 	{ "ss_key", "Secret" },
 	{ "ss_method", "rc4-md5" },
+	{ "ss_chdns", "0" },
 	{ "ss_own", "1" },
 	{ "ss_local_port", "1080" },
 	{ "ss_mtu", "1492" },
@@ -622,6 +625,8 @@ struct nvram_pair router_defaults[] = {
 	{ "ss-tunnel_remote", "8.8.4.4:53" },
 	{ "ss-tunnel_mtu", "1492" },
 	
+	{ "ss_update_chnroute", "0" },
+	{ "ss_update_gfwlist", "0" },
 	{ "ssp_staticnum_x", "0" },
 	
 	{ "v2_type_tcp", "none" },
@@ -748,7 +753,7 @@ struct nvram_pair router_defaults[] = {
 	{ "sdns_cache_persist", "1" },
 	{ "sdns_tcp_idle_time","120"},
 	{ "sdns_rr_ttl", "300" },
-	{ "sdns_rr_ttl_min", "600" },
+	{ "sdns_rr_ttl_min", "60" },
 	{ "sdns_rr_ttl_max", "3600" },
 	{ "sdns_rr_ttl_reply_max", "60" },
 	{ "sdns_max_reply_ip_num", "3" },

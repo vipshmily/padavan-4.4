@@ -4,7 +4,6 @@
 # Copyright (C) 2017 yushi studio <ywb94@qq.com>
 # Copyright (C) 2018 lean <coolsnowwolf@gmail.com>
 # Copyright (C) 2019 chongshengB <bkye@vip.qq.com>
-# Copyright (C) 2022 TurBoTse <860018505@qq.com>
 # Copyright (C) 2023 simonchen
 #
 # This is free software, licensed under the GNU General Public License v3.
@@ -208,7 +207,7 @@ start_rules() {
 	elif [ "$lan_con" = "1" ]; then
 		rm -f $lan_fp_ips
 		lancon="bip"
-		lancons="指定 IP 走代理: 请到规则管理页面添加需要走代理的 IP..."
+		lancons="指定IP走代理,请到规则管理页面添加需要走代理的IP！"
 		cat /etc/storage/ss_lan_bip.sh | grep -v '^!' | grep -v "^$" >$lan_fp_ips
 	fi
 	rm -f $lan_gm_ips
@@ -257,29 +256,29 @@ start_redir_tcp() {
 			usleep 500000
 		done
 		redir_tcp=1
-		log "Shadowsocks/ShadowsocksR $threads 线程启动成功..."
+		log "Shadowsocks/ShadowsocksR $threads 线程启动成功!"
 		;;
 	trojan)
 		for i in $(seq 1 $threads); do
 			run_bin $bin --config $trojan_json_file
 			usleep 500000
 		done
-		log "已运行 $($bin --version 2>&1 | head -1)"
+		log "$($bin --version 2>&1 | head -1) 启动成功！"
 		;;
 	v2ray)
 		run_bin $bin -config $v2_json_file
-		log "已运行 $($bin -version | head -1)"
+		log "$($bin -version | head -1) 启动成功！"
 		;;
 	xray)
 		run_bin $bin -config $v2_json_file
-		log "已运行 $($bin -version | head -1)"
+		log "$($bin -version | head -1) 启动成功！"
 		;;	
 	socks5)
 		for i in $(seq 1 $threads); do
 			run_bin lua /etc_ro/ss/gensocks.lua $GLOBAL_SERVER 1080
 			usleep 500000
 		done
-		;;
+	    ;;
 	esac
 	return 0
 }
@@ -314,7 +313,7 @@ start_redir_udp() {
 			;;
 		socks5)
 			echo "1"
-			;;
+		    ;;
 		esac
 	fi
 	return 0
@@ -423,13 +422,13 @@ start_AD() {
 	mkdir -p /tmp/dnsmasq.dom
 	curl -s -o /tmp/adnew.conf --connect-timeout 10 --retry 3 $(nvram get ss_adblock_url)
 	if [ ! -f "/tmp/adnew.conf" ]; then
-		log "广告过滤功能未开启或者过滤地址失效，网络异常等 ！！！"
+		log "广告过滤文件下载失败，可能是地址失效或网络异常等！"
 	else
-		log "去广告文件下载成功广告过滤功能已启用..."
+		log "广告过滤文件下载成功已启用！"
 		if [ -f "/tmp/adnew.conf" ]; then
 			check = `grep -wq "address=" /tmp/adnew.conf`
 	  		if [ ! -n "$check" ] ; then
-				cp /tmp/adnew.conf /tmp/dnsmasq.dom/anti-ad-for-dnsmasq.conf
+	    		cp /tmp/adnew.conf /tmp/dnsmasq.dom/anti-ad-for-dnsmasq.conf
 	  		else
 			    cat /tmp/adnew.conf | grep ^\|\|[^\*]*\^$ | sed -e 's:||:address\=\/:' -e 's:\^:/0\.0\.0\.0:' > /tmp/dnsmasq.dom/anti-ad-for-dnsmasq.conf
 			fi
@@ -438,7 +437,7 @@ start_AD() {
 	rm -f /tmp/adnew.conf
 }
 
-# ========== 启动 Socks5 代理 ==========
+# ================================= 启动 Socks5代理 ===============================
 start_local() {
 	local s5_port=$(nvram get socks5_port)
 	local local_server=$(nvram get socks5_enable)
@@ -514,19 +513,19 @@ auto_update() {
 	sed -i '/ss-watchcat/d' /etc/storage/cron/crontabs/$http_username
 	if [ $(nvram get ss_update_chnroute) = "1" ]; then
 		cat >>/etc/storage/cron/crontabs/$http_username <<EOF
-0 7 * * * /usr/bin/update_chnroute.sh > /dev/null 2>&1
+0 8 */10 * * /usr/bin/update_chnroute.sh > /dev/null 2>&1
 EOF
 	fi
 	if [ $(nvram get ss_update_gfwlist) = "1" ]; then
 		cat >>/etc/storage/cron/crontabs/$http_username <<EOF
-0 8 * * * /usr/bin/update_gfwlist.sh > /dev/null 2>&1
+0 7 */10 * * /usr/bin/update_gfwlist.sh > /dev/null 2>&1
 EOF
 	fi
 }
 
-# ========== 启动 SS ==========
+# ================================= 启动 SS ===============================
 ssp_start() { 
-	ss_enable=`nvram get ss_enable`
+    ss_enable=`nvram get ss_enable`
 	if rules; then
 		cgroups_init
 		if start_redir_tcp; then
@@ -540,15 +539,16 @@ ssp_start() {
 	auto_update
 	ENABLE_SERVER=$(nvram get global_server)
 	[ "$ENABLE_SERVER" = "nil" ] && return 1
-	log "已启动科学上网..."
+	log "科学上网启动成功！"
 	log "内网IP控制为: $lancons"
 	nvram set check_mode=0
-	if [ "$pppoemwan" = 0 ]; then
-		/usr/bin/detect.sh
-	fi
+    if [ "$pppoemwan" = 0 ]; then
+        /usr/bin/detect.sh
+    fi
 }
 
-# ========== 关闭 SS ==========
+# ================================= 关闭SS ===============================
+
 ssp_close() {
 	rm -rf /tmp/cdn
 	$SS_RULES -f
@@ -566,27 +566,25 @@ ssp_close() {
 	clear_iptable
 	/sbin/restart_dhcpd
 	if [ "$pppoemwan" = 0 ]; then
-		/usr/bin/detect.sh
-	fi
+        /usr/bin/detect.sh
+    fi
 }
-
 
 clear_iptable() {
 	s5_port=$(nvram get socks5_port)
-	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
-	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
-	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
-	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
+	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
+	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
+	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
+	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
 }
 
 kill_process() {
 	v2ray_process=$(pidof v2ray || pidof xray)
 	if [ -n "$v2ray_process" ]; then
-		log "关闭 V2Ray 进程..."
+		log "关闭 Xray 进程..."
 		killall v2ray xray >/dev/null 2>&1
 		kill -9 "$v2ray_process" >/dev/null 2>&1
 	fi
-
 	ssredir=$(pidof ss-redir)
 	if [ -n "$ssredir" ]; then
 		log "关闭 ss-redir 进程..."
@@ -600,7 +598,7 @@ kill_process() {
 		killall ssr-redir >/dev/null 2>&1
 		kill -9 "$rssredir" >/dev/null 2>&1
 	fi
-
+	
 	sslocal_process=$(pidof ss-local)
 	if [ -n "$sslocal_process" ]; then
 		log "关闭 ss-local 进程..."
@@ -635,7 +633,7 @@ kill_process() {
 		killall ssr-server >/dev/null 2>&1
 		kill -9 "$ssrs_process" >/dev/null 2>&1
 	fi
-
+	
 	cnd_process=$(pidof chinadns-ng)
 	if [ -n "$cnd_process" ]; then
 		log "关闭 chinadns-ng 进程..."
@@ -649,7 +647,7 @@ kill_process() {
 		killall dns2tcp >/dev/null 2>&1
 		kill -9 "$dns2tcp_process" >/dev/null 2>&1
 	fi
-
+	
 	dnsproxy_process=$(pidof dnsproxy)
 	if [ -n "$dnsproxy_process" ]; then
 		log "关闭 dnsproxy 进程..."
@@ -665,7 +663,7 @@ kill_process() {
 	fi
 }
 
-# ========== 启用备用服务器 ==========
+# ================================= 启用备用服务器 ===============================
 ressp() {
 	BACKUP_SERVER=$(nvram get backup_server)
 	start_redir $BACKUP_SERVER
@@ -681,9 +679,10 @@ ressp() {
 
 case $1 in
 start)
-	if [ $(nvram get ss_adblock) = "1" ]; then
-		start_AD
-	fi
+    ss_adblock=$(nvram get ss_adblock)
+    if [ $(nvram get ss_adblock) = "1" ]; then
+        Start_AD
+    fi
 	ssp_start
 	echo 3 > /proc/sys/vm/drop_caches
 	;;
@@ -706,4 +705,3 @@ reserver)
 	#exit 0
 	;;
 esac
-
