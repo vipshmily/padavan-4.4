@@ -92,7 +92,6 @@ VOID FT_FTIE_InsertKhIdSubIE(
 	IN UINT8 KhIdLen)
 {
 	ULONG TempLen;
-	UCHAR TempSubID;
 
 	if (SubId != FT_R0KH_ID && SubId != FT_R1KH_ID)
 	{
@@ -116,10 +115,8 @@ VOID FT_FTIE_InsertKhIdSubIE(
 			__FUNCTION__, KhIdLen));
 	}		
 
-	TempSubID = (UCHAR)SubId;
-
 	MakeOutgoingFrame(	pFrameBuf,		&TempLen,
-						1,				&TempSubID,
+						1,				&SubId,
 						1,				&KhIdLen,
 						KhIdLen,		(PUCHAR)pKhId,
 						END_OF_ARGS);
