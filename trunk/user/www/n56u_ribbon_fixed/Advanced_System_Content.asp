@@ -179,11 +179,29 @@ function blanktest(obj, flag){
 
 function openLink(s) {
 	var link_params = "toolbar=yes,location=yes,directories=no,status=yes,menubar=yes,scrollbars=yes,resizable=yes,copyhistory=no,width=640,height=480";
-	var tourl = "http://support.ntp.org/bin/view/Servers/WebHome";
+	var tourl = "https://support.ntp.org/bin/view/Servers/WebHome";
 	link = window.open(tourl, "NTPLink", link_params);
 	if (!link.opener) link.opener = self;
 }
 
+function ntpSyncNow() {
+	$j.ajax({
+		type: "post",
+		url: "/apply.cgi",
+		data: {
+			action_mode: " NTPSyncNow "
+		},
+		dataType: "json",
+		error: function(xhr) {
+			return false;
+		},
+		success: function(response) {
+			var sys_result = (response != null && typeof response === 'object' && "sys_result" in response)
+				? response.sys_result : -1;
+			if (sys_result == 0) refreshpage();
+		}
+	});
+}
 function check_Timefield_checkbox(){	// To check Date checkbox checked or not and control Time field disabled or not
 	if( document.form.reboot_date_x_Sun.checked == true 
 		|| document.form.reboot_date_x_Mon.checked == true 
@@ -463,6 +481,7 @@ function updateDateTime()
                                             <th><a class="help_tooltip"  href="javascript:void(0);" onmouseover="openTooltip(this,11,3)"><#LANHostConfig_x_NTPServer1_itemname#> 2:</a></th>
                                             <td>
                                                 <input type="text" maxlength="128" class="input" size="32" name="ntp_server1" value="<% nvram_get_x("","ntp_server1"); %>" onKeyPress="return is_string(this,event);"/>
+                                                <a href="javascript:ntpSyncNow()" class="label label-info" name="x_NTP_SyncNow"><#LANHostConfig_x_NTP_SyncNow#></a>
                                             </td>
                                         </tr>
 
