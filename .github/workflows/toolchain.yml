@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
       - name: Prepare environment
@@ -19,14 +19,14 @@ jobs:
         run: |
           make toolchain/build
           cd toolchain-mipsel/toolchain-4.4.x
-          tar cJf ../mipsel-linux-uclibc-gcc10.tar.xz *
+          tar cJf ../mipsel-linux-uclibc-gcc10.5.0.tar.xz *
       - uses: actions/upload-artifact@main
         with:
           name: toolchain
-          path: toolchain-mipsel/mipsel-linux-uclibc-gcc10.tar.xz
+          path: toolchain-mipsel/mipsel-linux-uclibc-gcc10.5.0.tar.xz
       - uses: ncipollo/release-action@main
         with:
           token: ${{ github.token }}
           tag: toolchain
-          artifacts: toolchain-mipsel/mipsel-linux-uclibc-gcc10.tar.xz
+          artifacts: toolchain-mipsel/mipsel-linux-uclibc-gcc10.5.0.tar.xz
           allowUpdates: true
