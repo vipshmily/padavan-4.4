@@ -700,7 +700,6 @@ is_need_tcp_mss_wan(int unit, int wan_proto, char *man_if)
 		    wan_proto == IPV4_WAN_PROTO_PPTP ||
 		    wan_proto == IPV4_WAN_PROTO_L2TP)
 			return 1;
-		
 		if (get_interface_mtu(man_if) != 1500)
 			return 1;
 	}*/
@@ -1792,6 +1791,11 @@ ipt_nat_rules(char *man_if, char *man_ip,
 		
 		snprintf(dmz_ip, sizeof(dmz_ip), "%s", nvram_safe_get("dmz_ip"));
 		is_use_dmz = (is_valid_ipv4(dmz_ip)) ? 1 : 0;
+		/* redirect all LAN clients' DNS queries (PREROUTING) */
+		if (wan_ip && nvram_match("redirect_all_dns", "1")) {
+			fprintf(fp, "-I %s -i %s -p tcp --dport 53 -j DNAT --to %s\n", "PREROUTING", lan_if, lan_ip);
+			fprintf(fp, "-I %s -i %s -p udp --dport 53 -j DNAT --to %s\n", "PREROUTING", lan_if, lan_ip);
+		}
 		
 		/* BattleNET (PREROUTING + POSTROUTING) */
 		if (wan_ip && nvram_match("sp_battle_ips", "1")) {
