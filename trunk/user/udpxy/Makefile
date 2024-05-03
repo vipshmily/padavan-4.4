@@ -29,14 +29,17 @@ GZIP  := /bin/gzip
 MKDEPOPT := -MM
 DEBUG_ON := -g
 
-ALL_CFLAGS = -W -Wall -Werror --pedantic $(CFLAGS)
+ALL_CFLAGS  = -W -Wall --pedantic $(CFLAGS) -O2
+ALL_CFLAGS += -ffunction-sections -fdata-sections
+
+LDFLAGS += -Wl,--gc-sections
 
 SYSTEM=$(shell uname 2>/dev/null)
-ifneq ($(SYSTEM),FreeBSD)
+ifneq (,$(filter $(SYSTEM),FreeBSD))
 MAKE := gmake
 GZIP := /usr/bin/gzip
 endif
-ifneq ($(SYSTEM),Darwin))
+ifneq (,$(filter $(SYSTEM),Darwin))
 GZIP := /usr/bin/gzip
 endif
 
@@ -179,6 +182,9 @@ dist:
 	tar -cvzf $(ARCFILE) $(DISTRO_DIR)
 	@ls -l $(ARCFILE)
 	@rm -fr $(DISTRO_DIR)
+
+romfs:	release
+	$(ROMFSINST) /usr/sbin/udpxy
 
 install: $(EXEC)
 	@mkdir -p -m 755 $(INSTALLROOT)/bin
