@@ -2,7 +2,8 @@ TOPDIR:=${CURDIR}
 SOURCE_DIR:=$(TOPDIR)/trunk
 TOOLCHAIN_DIR:=$(TOPDIR)/toolchain-mipsel
 TOOLCHAIN_ROOT:=$(TOOLCHAIN_DIR)/toolchain-4.4.x
-TOOLCHAIN_URL:=https://github.com/vipshmily/padavan-4.4/releases/download/toolchain/mipsel-linux-uclibc-10.5.0.tar.xz
+TOOLCHAIN_URL:=https://github.com/vipshmily/padavan-4.4/releases/download/toolchain/mipsel-linux-uclibc-gcc10.5.0.tar.xz
+
 TEMPLATE_DIR:=$(SOURCE_DIR)/configs/templates
 PRODUCTS:=$(shell ls $(TEMPLATE_DIR) | sed 's/.config//g')
 CONFIG:=$(SOURCE_DIR)/.config
