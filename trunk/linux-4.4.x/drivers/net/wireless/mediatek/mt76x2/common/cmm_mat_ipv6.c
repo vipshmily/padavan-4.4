@@ -243,6 +243,10 @@ static NDIS_STATUS IPv6MacTableUpdate(
         }
 	}
 
+#ifdef ETH_CONVERT_SUPPORT
+	if (pMatCfg->nodeCount >= ETH_CONVERT_NODE_MAX)
+		return FALSE;
+#endif /* ETH_CONVERT_SUPPORT */
 
 	/* Allocate a new IPv6MacMapping entry and insert into the hash */
 	pNewEntry = (IPv6MacMappingEntry *)MATDBEntryAlloc(pMatCfg, sizeof(IPv6MacMappingEntry));
@@ -605,7 +609,7 @@ static PUCHAR MATProto_IPv6_Tx(
 	IN PUCHAR 			pLayerHdr,
 	IN PUCHAR			pDevMacAdr)
 {
-	PUCHAR pSrcMac, pSrcIP;
+	PUCHAR pSrcMac;
 	BOOLEAN needUpdate;
 	UCHAR nextProtocol;
 	UINT32 offset;	
@@ -617,7 +621,6 @@ static PUCHAR MATProto_IPv6_Tx(
 	pEthHdr = (HEADER_802_3 *)(GET_OS_PKT_DATAPTR(pSkb));
 	
 	pSrcMac = (UCHAR *)&pEthHdr->SAAddr2;
-	pSrcIP = (UCHAR *)&pIPv6Hdr->srcAddr;
 
 	
 	
