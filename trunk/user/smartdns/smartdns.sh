@@ -110,7 +110,7 @@ Check_md5 () {
 Check_ss(){
     if [ -s /etc_ro/ss_ip.sh ] ; then
         if [ $(nvram get ss_enable) = 1 ] && [ $(nvram get ss_run_mode) = "router" ] && [ $(nvram get pdnsd_enable) = 0 ] ; then
-            logger -t "SmartDNS" "系统检测到 SS 模式为绕过大陆模式，并且启用了 pdnsd 请先调整 SS 解析使用 SmartDNS +手动配置模式！程序将退出..."
+            logger -t "SmartDNS" "系统检测到 SS 模式为绕过大陆模式，并且启用了 pdnsd 请先调整 SS 解析使用 SmartDNS +手动配置模式！程序将退出！"
             nvram set sdns_enable=0
             exit 0
         fi
@@ -348,9 +348,9 @@ Start_AD () {
 # 【下载广告过滤文件】
     curl -s -o /tmp/sdnsadnew.conf --connect-timeout 10 --retry 3 $(nvram get sdns_adblock_url)
     if [ ! -f "/tmp/sdnsadnew.conf" ]; then
-        logger -t "SmartDNS" "广告过滤功能未开启或者过滤地址失效，网络异常等 ！！！"
+        logger -t "SmartDNS" "广告过滤文件下载失败，可能是地址失效或网络异常等！"
     else
-        logger -t "SmartDNS" "去广告文件下载成功广告过滤功能已启用..."
+        logger -t "SmartDNS" "广告过滤文件下载成功已启用！"
         if [ -f "/tmp/sdnsadnew.conf" ]; then
             check = `grep -wq "address=" /tmp/sdnsadnew.conf`
             if [ ! -n "$check" ] ; then
@@ -510,7 +510,7 @@ Start_smartdns () {
     if [ "$dnsmasq_md5" != $(md5sum  "$dnsmasq_Conf" | awk '{ print $1 }') ] ; then
         logger -t "SmartDNS" "正在重启 DNSmasq 进程..."
         /sbin/restart_dhcpd >/dev/null 2>&1
-        logger -t "SmartDNS" "DNSmasq 进程已重启..."
+        logger -t "SmartDNS" "DNSmasq 进程已重启！"
     fi
     # 启动 smartdns 进程
     "$smartdns_Bin" -f -c "$smartdns_Conf" "$args"  &>/dev/null &
@@ -520,7 +520,7 @@ Start_smartdns () {
         if [ "$hosts_type" = "SmartDNS" ] ; then
             logger -t "SmartDNS" "启动失败..."
             logger -t "SmartDNS" "删除"$smartdns_Conf"中conf-file附加去广告设置，再次启动..."
-            logger -t "SmartDNS" "若启动成功，则请检查相关去广告规则格式是否符合SmartDNS要求..."
+            logger -t "SmartDNS" "若启动成功，则请检查相关去广告规则格式是否符合SmartDNS要求！"
             sed -i '/conf-file /d' "$smartdns_Conf"
             "$smartdns_Bin" -f -c "$smartdns_Conf" "$args"  &>/dev/null &
         fi
@@ -529,8 +529,8 @@ Start_smartdns () {
     smartdns_process=$(pidof smartdns | awk '{ print $1 }')
     if [ "$smartdns_process"x = x ] ; then
         logger -t "SmartDNS" "启动失败..."
-        logger -t "SmartDNS" "停用 SmartDNS！请检查其端口配置及自定义设置 ！！！"
-        logger -t "SmartDNS" "恢复 DNSmasq 提供 DNS 解析..."
+        logger -t "SmartDNS" "停用 SmartDNS！请检查其端口配置及自定义设置！"
+        logger -t "SmartDNS" "恢复 DNSmasq 提供 DNS 解析！"
         nvram set sdns_enable=0
         sdns_enable=0
         action="stop"
@@ -538,30 +538,30 @@ Start_smartdns () {
         if [ "$dnsmasq_md5" != $(md5sum  "$dnsmasq_Conf" | awk '{ print $1 }') ] ; then
             logger -t "SmartDNS" "正在重启 DNSmasq 进程..."
             /sbin/restart_dhcpd >/dev/null 2>&1
-            logger -t "SmartDNS" "DNSmasq 进程已重启..."
+            logger -t "SmartDNS" "DNSmasq 进程已重启！"
         fi
         exit
     else
-        logger -t "SmartDNS" "进程已启动..."
+        logger -t "SmartDNS" "SmartDNS 进程已启动！"
     fi
 }
 
 Stop_smartdns () {
     # 【】
     killall -9 smartdns >/dev/null 2>&1
-    logger -t "SmartDNS" "结束 SmartDNS 进程..."
+    logger -t "SmartDNS" "结束 SmartDNS 进程！"
     Change_adbyby
     Change_dnsmasq
     Change_iptable
     if [ "$dnsmasq_md5" != $(md5sum  "$dnsmasq_Conf" | awk '{ print $1 }') ] && [ "$sdns_enable" = 0 ] ; then
         logger -t "SmartDNS" "正在重启 DNSmasq 进程..."
         /sbin/restart_dhcpd >/dev/null 2>&1
-        logger -t "SmartDNS" "DNSmasq 进程已重启..."
+        logger -t "SmartDNS" "DNSmasq 进程已重启！"
     fi
     smartdns_process=$(pidof smartdns | awk '{ print $1 }')
     if [ "$smartdns_process"x = x ] && [ "$sdns_enable" = 0 ] ; then 
         rm  -f "$smartdns_Ini"
-        logger -t "SmartDNS" "服务器已停用..."
+        logger -t "SmartDNS" "服务器已停用！"
     fi
 }
 
@@ -577,7 +577,7 @@ Main () {
                 Start_AD
         fi
         Start_smartdns
-        logger -t "SmartDNS" "服务器已启动..."
+        logger -t "SmartDNS" "服务器已启动！"
         sleep 2
         echo 3 > /proc/sys/vm/drop_caches
         ;;
@@ -586,7 +586,7 @@ Main () {
         if [ "$smartdns_process"x != x ] ; then
             case $sdns_enable in
             0)
-                logger -t "SmartDNS" "停用服务器 ..."
+                logger -t "SmartDNS" "停用服务器！"
                 ;;
             1)
                 logger -t "SmartDNS" "重启服务器..."
@@ -606,7 +606,7 @@ Main () {
         fi
         Check_ss
         Start_smartdns
-        logger -t "SmartDNS" "服务器已重启完成.."
+        logger -t "SmartDNS" "服务器已重启完成！"
         sleep 2
         echo 3 > /proc/sys/vm/drop_caches
         ;;

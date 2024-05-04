@@ -58,7 +58,7 @@
 			$j("#btn_add_link").click(function () {
 				initSSParams();
 				editing_ss_id = 0;
-				document.getElementById("ss_setting_title").innerHTML = "添加节点";
+				document.getElementById("ss_setting_title").innerHTML = "添加/导入节点";
 				$j("#vpnc_settings").fadeIn(200);
 			});
 			$j("#btn_del_link").click(function () {
@@ -433,12 +433,12 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 			document.form.current_page.value = "Shadowsocks.asp#add";
 			return true;
 		}
-		//订阅节点
+		//节点订阅
 		function dlink() {
 		ctime();
 			var ns = {};
 			ns[1] = "dlink";
-			document.getElementById("btn_update_link").value="正在更新";
+			document.getElementById("btn_update_link").value="正在更新节点订阅";
 			$j.ajax({
 				url: "/applydb.cgi?usedlink=1&p=ss",
 				type: 'POST',
@@ -449,16 +449,16 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 					alert("脚本执行失败！！！")
 				},
 				success: function (response) {
-					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_update_link').value='更新订阅';",1000);
+					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_update_link').value='更新节点订阅';",1000);
 				}
 			});
 		}
-		//清空节点
+		//删除全部节点
 		function ddlink() {
 		ctime();
 			var ns = {};
 			ns[1] = "ddlink";
-			document.getElementById("btn_rest_link").value="正在清空";
+			document.getElementById("btn_rest_link").value="正在删除全部节点";
 			$j.ajax({
 				url: "/applydb.cgi?useddlink=1&p=ss",
 				type: 'POST',
@@ -470,7 +470,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 				},
 				success: function (response) {
 					node_global_max=0;
-					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_rest_link').value='清空节点';",1000);
+					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_rest_link').value='删除全部节点';",1000);
 				}
 			});
 		}
@@ -838,7 +838,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 				}
 			});
 		}
-		//批量删除
+		//删除选中节点
 		function del_dlink() {
 		ctime();
 			var row = $j("#table99").bootstrapTable('getSelections');
@@ -848,7 +848,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 				ns[p + "_json_" + row[key].ids] = "deleting";
 			}
 			//console.log(ns)
-			document.getElementById("btn_del_link").value="正在删除节点";
+			document.getElementById("btn_del_link").value="正在删除选中节点";
 			$j.ajax({
 				url: "/applydb.cgi?userm1=del&p=ss",
 				type: 'POST',
@@ -859,11 +859,11 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 					alert("删除失败,请重试！")
 				},
 				success: function (response) {
-					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_del_link').value='删除节点';",1000);
+					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_del_link').value='删除选中节点';",1000);
 				}
 			});
 		}
-		//ping节点
+		//ping选中节点
 		function ping_dlink() {
 		ctime();
 			var row = $j("#table99").bootstrapTable('getSelections');
@@ -873,7 +873,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 				ns[row[key].ids] = "ping";
 			}
 			//showLoading();
-			document.getElementById("btn_ping_link").value="正在ping节点";
+			document.getElementById("btn_ping_link").value="正在ping选中节点";
 			$j.ajax({
 				url: "/applydb.cgi?useping=1&p=ss",
 				type: 'POST',
@@ -884,7 +884,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 					alert("脚本执行失败！！！")
 				},
 				success: function (response) {
-					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_ping_link').value='ping节点';",2000);
+					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_ping_link').value='ping选中节点';",2000);
 				}
 			});
 		}
@@ -893,7 +893,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 		ctime();
 			var ns = {};
 			ns[1] = "allping";
-			document.getElementById("btn_aping_link").value="正在ping节点";
+			document.getElementById("btn_aping_link").value="正在ping全部节点";
 			$j.ajax({
 				url: "/applydb.cgi?useping=1&p=ss",
 				type: 'POST',
@@ -904,7 +904,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 					alert("脚本执行失败！！！")
 				},
 				success: function (response) {
-					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_aping_link').value='ping全部';",2000);
+					setTimeout("dtime();$j('#table99').bootstrapTable('refresh');document.getElementById('btn_aping_link').value='ping全部节点';",2000);
 				}
 			});
 		}
@@ -1557,9 +1557,9 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 											<div id="tabMenu" class="submenuBlock"></div>
 											<div id="wnd_ss_cfg">
 												<div class="alert alert-info" style="margin: 10px;">一个兼容Shadowsocks、ShadowsocksR 、Vmess、Vless、Trojan、Sock5协议的游戏加速工具。
-													<div><span style="color:#E53333;">注意:</span></div>
-													<div><span style="color:#E53333;">若被编辑的节点正在运行使用，请完成后点击“应用设置”更新节点信息并"重连"</span></div>
-													<div><span style="color:#E53333;">运行状态不会实时更新，启动程序后需等待一段时间后点击"刷新"获取运行状态</span></div>
+													<div><span style="color:#E53333;">注意：</span></div>
+													<div><span style="color:#E53333;">若被编辑的节点正在运行使用，请完成后点击“应用设置”按钮更新节点信息，并点击"重连"按钮重新连接。</span></div>
+													<div><span style="color:#E53333;">运行状态不会实时更新，启动程序后需稍等片刻后，点击"刷新"按钮重新获取运行状态。</span></div>
 												</div>
 												<table width="100%" cellpadding="4" cellspacing="0" class="table">
 													<tr>
@@ -1596,16 +1596,16 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 														<td id="dnsproxy_status"></td>
 													</tr>
 													<tr>
-														<th width="50%">Google 访问状态：</th>
-														<td id="gg_status"></td>
-													</tr>
-													<tr>
 														<th width="50%">国内IP：</th>
 														<td id="domestic_ip"></td>
 													</tr>
 													<tr>
 														<th width="50%">国外IP：</th>
 														<td id="foreign_ip"></td>
+													</tr>
+													<tr>
+														<th width="50%">Google 访问状态：</th>
+														<td id="gg_status"></td>
 													</tr>
 													<tr>
 														<th width="50%">主服务器：</th>
@@ -1746,7 +1746,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 											<!--节点列表-->
 											<div id="wnd_ss_add">
 												<table width="100%" cellpadding="4" cellspacing="0" class="table">
-													<div class="alert alert-info" style="margin: 10px;"> 添加完节点地址后，请先点击下方的 “应用设置” 再点击 “更新节点” 按钮更新所订阅的节点。</div>
+													<div class="alert alert-info" style="margin: 10px;"> 添加完节点订阅地址后，请先点击下方“应用设置”按钮，再点击“更新订阅”按钮更新所订阅的节点。</div>
 													<tr>
 														<td colspan="3">
 															<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('script7')"><span>点击输入节点订阅地址：(一行一个地址)</span></a>
@@ -1791,7 +1791,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 													<tr><th width="50%"><#Keyword_filter#></th>
 														<td>
 															<input type="input" name="ss_keyword" id="ss_keyword" value="<% nvram_get_x("", "ss_keyword"); %>" >
-															<br> 命中关键字的节点将被丢弃，多个关键字用 / 分隔
+															<br> 命中关键字的节点将被丢弃，多个关键字用 / 分隔。
 														</td>
 													</tr>
 												</table>
@@ -1803,13 +1803,13 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 																<option value="d">自定义节点</option>
 																<option value="c">订阅节点</option>
 															</select>
-															<input type="button" id="btn_del_link" class="btn btn-danger" value="删除节点">
-															<input type="button" id="btn_rest_link" class="btn btn-danger" value="清空节点" onclick="ddlink();">
-															<input type="button" id="btn_add_link" class="btn btn-info" value="添加/导入">
-															<input type="button" id="btn_update_link" class="btn btn-info" value="更新节点" onclick="dlink();">
 															<input name="button" type="button" class="btn btn-primary" onclick="applyRule();" value="<#CTL_apply#>">
-															<input type="button" id="btn_ping_link" class="btn btn-info" value="ping所选">
-															<input type="button" id="btn_aping_link" class="btn btn-info" value="ping全部">
+															<input type="button" id="btn_add_link" class="btn btn-info" value="添加/导入节点">
+															<input type="button" id="btn_update_link" class="btn btn-info" value="更新节点订阅" onclick="dlink();">
+															<input type="button" id="btn_ping_link" class="btn btn-info" value="ping选中节点">
+															<input type="button" id="btn_aping_link" class="btn btn-info" value="ping全部节点">
+															<input type="button" id="btn_del_link" class="btn btn-danger" value="删除选中节点">
+															<input type="button" id="btn_rest_link" class="btn btn-danger" value="删除全部节点" onclick="ddlink();">
 															<input type="button" id="btn_reconnect" class="btn btn-info" value="刷新页面" onclick="window.location.reload();">
 															<input type="button" id="btn_ctime" style="display:none;" class="btn btn-good" value="正在运行脚本:0s" onclick="">
 														</th>

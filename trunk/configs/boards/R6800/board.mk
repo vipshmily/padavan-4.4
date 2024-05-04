@@ -4,6 +4,6 @@
 # NETGEAR-R6800 # NETGEAR-R6800   # MT7621  #
 ##################################################################
 
-CFLAGS += -DBOARD_NETGEAR_R6800
+CFLAGS += -DBOARD_R6800
 BOARD_NUM_USB_PORTS=2
 CONFIG_BOARD_RAM_SIZE=256
