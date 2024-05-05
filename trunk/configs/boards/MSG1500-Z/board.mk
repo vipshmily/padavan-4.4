@@ -4,6 +4,6 @@
 # MSG1500-Z   # MSG1500-Z          # MT7621  #
 ##################################################################
 
-CFLAGS += -DBOARD_MSG1500-Z
+CFLAGS += -DBOARD_MSG1500_Z
 BOARD_NUM_USB_PORTS=1
 CONFIG_BOARD_RAM_SIZE=64
