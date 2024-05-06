@@ -249,6 +249,7 @@ function show_banner(L3){
 	if (!support_5g_radio()) {
 		title_5g = '"N/A" disabled';
 	}
+
 	// log panel
 	if (!is_mobile && log_float != '0'){
 		bc += '<div class="syslog_panel">\n';
@@ -368,7 +369,7 @@ function show_banner(L3){
 	bc += '  </tr>\n';
 	bc += '  <tr>\n';
 	bc += '    <td><button type="button" id="commit_btn" class="btn btn-mini" style="width: 114px; height: 21px; outline:0; '+enabledBtnCommit+'" onclick="commit();"><i class="icon icon-fire"></i>&nbsp;<#CTL_Commit#></button></td>\n';
-	bc += '    <td><button type="button" id="freememory_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#BTN_FREEMEMORY#>" onclick="freememory();"><i class="icon icon-trash"></i></button><button type="button" id="logout_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#t1Logout#>" onclick="logout();"><i class="icon icon-user"></i></button> <button type="button" id="reboto_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#BTN_REBOOT#>" onclick="reboot();"><i class="icon icon-repeat"></i></button></td>\n';
+	bc += '    <td><button type="button" id="freememory_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#BTN_FREEMEMORY#>" onclick="freememory();"><i class="icon icon-trash"></i></button><button type="button" id="logout_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#t1Logout#>" onclick="logout();"><i class="icon icon-user"></i></button> <button type="button" id="reboto_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#BTN_REBOOT#>" onclick="reboot();"><i class="icon icon-repeat"></i></button><button type="button" id="shutdown_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#BTN_SHUTDOWN#>" onclick="shutdown();"><i class="icon icon-off"></i></button></td>\n';
 	bc += '  </tr>\n';
 	bc += '</table>\n';
 	bc += '</div>\n';
@@ -744,9 +745,8 @@ function show_footer(){
 	footer_code = '<div align="center" class="bottom-image"></div>\n';
 	footer_code +='<div align="center" class="copyright"><#footer_copyright_desc#></div>\n';
 	footer_code +='<div align="center">\n';
-	footer_code +='  <span>Highcharts by Torstein Hønsi & <a href="http://www.highcharts.com">Highsoft</a></span></br>\n';
-	footer_code +='  <span>Big icons designed by <a href="http://www.freepik.com">Freepik</a></br></span>\n';
-	footer_code +='  <span>Non-Commercial Use Only</span></br>\n';
+	footer_code +='  <span>Developed by © <a href="https://bitbucket.org/padavan/rt-n56u/">Andy Padavan</a> &amp; <a href="https://github.com/hanwckf/padavan-4.4">hanwckf</a> &amp; <a href="https://github.com/MeIsReallyBa/padavan-4.4">MeIsReallyBa</a> &amp; <a href="https://github.com/tsl0922/padavan">tsl0922</a> &amp; <a href="https://github.com/TurBoTse/padavan">TurBoTse</a> &amp; <a href="https://github.com/vipshmily/padavan-4.4">vipshmily</a></span></br>\n';
+	footer_code +='  <span>Firmware distribution is prohibited &amp; Non-Commercial Use Only</span></br>\n';
 	footer_code +='</div>\n';
 
 	$("footer").innerHTML = footer_code;
@@ -857,12 +857,23 @@ function reboot(){
 	});
 }
 
+function shutdown(){
+	if(!confirm('<#JS_shutdown#>'))
+		return;
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' Shutdown ',
+		'current_page': 'Main_LogStatus_Content.asp'
+	});
+}
+
 function freememory(){
 	var $j = jQuery.noConflict();
 	$j.post('/apply.cgi',
 	{
 		'action_mode': ' FreeMemory ',
-		'current_page': 'Main_LogStatus_Content.asp'
+		'current_page': 'index.asp'
 	});
 }
 

@@ -1,3 +1,9 @@
-CFLAGS += -DBOARD_SIM-AX1800T -DBOARD_MT7915_DBDC
+##################################################################
+# Board PID       # Board Name      # PRODUCT # Note
+##################################################################
+# SIM-AX1800T   # SIM-AX1800T   # MT7621  #
+##################################################################
+
+CFLAGS += -DBOARD_SIM_AX1800T -DBOARD_MT7915_DBDC
 BOARD_NUM_USB_PORTS=0
 CONFIG_BOARD_RAM_SIZE=256

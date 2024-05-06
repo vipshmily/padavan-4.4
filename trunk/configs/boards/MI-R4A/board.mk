@@ -4,6 +4,6 @@
 # MI-R4A    # Xiaomi Mi R4A    # MT7621  #
 ##################################################################
 
-CFLAGS += -DBOARD_MI-R4A
+CFLAGS += -DBOARD_MI_R4A
 BOARD_NUM_USB_PORTS=0
 CONFIG_BOARD_RAM_SIZE=128

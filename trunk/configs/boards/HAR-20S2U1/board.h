@@ -1,3 +1,5 @@
+/* HAR-20S2U1 */
+
 #define BOARD_PID		"HAR-20S2U1"
 #define BOARD_NAME		"HAR-20S2U1"
 #define BOARD_DESC		"Haier HAR-20S2U1 Wireless Router"

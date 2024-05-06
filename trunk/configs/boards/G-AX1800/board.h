@@ -1,3 +1,5 @@
+/* G-AX1800 */
+
 #define BOARD_PID		"G-AX1800"
 #define BOARD_NAME		"G-AX1800"
 #define BOARD_DESC		"G-AX1800 Wireless Router"

@@ -4,6 +4,6 @@
 # QM-B1 # QM-B1  # MT7621  #
 ##################################################################
 
-CFLAGS += -DBOARD_QM-B1
+CFLAGS += -DBOARD_QM_B1
 BOARD_NUM_USB_PORTS=1
 CONFIG_BOARD_RAM_SIZE=512
