@@ -1,8 +1,7 @@
-SRC_NAME=nfs-utils-2.6.4
-SRC_URL=https://www.kernel.org/pub/linux/utils/nfs-utils/2.6.4/$(SRC_NAME).tar.xz
+SRC_NAME=nfs-utils-2.6.1
+SRC_URL=https://www.kernel.org/pub/linux/utils/nfs-utils/2.6.1/$(SRC_NAME).tar.xz
 
-CFLAGS +=$(COPT) -ffunction-sections -fdata-sections -fvisibility=hidden #`pkg-config --cflags uuid`
-LDFLAGS += -Wl,--gc-sections #`pkg-config --libs uuid`
+CFLAGS += -fvisibility=hidden -D_LARGEFILE64_SOURCE
 
 all: download_test extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
@@ -26,7 +25,7 @@ config_test:
 
 configure:
 	( cd $(SRC_NAME) && \
-	autoreconf -fi ; \
+	./autogen.sh ; \
 	knfsd_cv_bsd_signals=no \
 	PKG_CONFIG_PATH=$(STAGEDIR)/lib/pkgconfig \
 	./configure \
@@ -43,7 +42,6 @@ configure:
 		--without-gssglue \
 		--without-krb5 \
 		--without-tcp-wrappers \
-		LIBS="-ltirpc" \
 		--host=$(HOST_TARGET) \
 		--build=$(HOST_BUILD) ; \
 	)
@@ -55,7 +53,7 @@ clean:
 	rm -f config_done
 
 romfs:
-	$(ROMFSINST) /usr/bin/nfsd.sh
+	$(ROMFSINST) -p +x /usr/bin/nfsd.sh
 	$(ROMFSINST) $(SRC_NAME)/utils/exportfs/exportfs /sbin/exportfs
 	$(ROMFSINST) $(SRC_NAME)/utils/nfsd/nfsd /sbin/rpc.nfsd
 	$(ROMFSINST) $(SRC_NAME)/utils/mountd/mountd /sbin/rpc.mountd
