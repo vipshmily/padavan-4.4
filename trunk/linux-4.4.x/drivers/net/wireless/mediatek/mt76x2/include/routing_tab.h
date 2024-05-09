@@ -18,25 +18,22 @@
  ***************************************************************************
 
 
- Module Name:
- routing_tab.h
-
-Abstract:
-This is a tab used to record all entries behind associated APClinet or STA/PC.
-
-Revision History:
-Who          When          What
----------    ----------    ----------------------------------------------
+    Module Name:
+	routing_tab.h
+ 
+    Abstract:
+    This is a tab used to record all entries behind associated APClinet or STA/PC.
+    
+    Revision History:
+    Who          When          What
+    ---------    ----------    ----------------------------------------------
  */
 
 #ifdef ROUTING_TAB_SUPPORT
 #include "rtmp_def.h"
 
-/*struct _RTMP_ADAPTER *PRTMP_ADAPTER;*/
-
-#define ROUTING_ENTRY_AGEOUT (10*OS_HZ)  /* seconds */
-#define ROUTING_ENTRY_RETRY_TIME (2*OS_HZ)  /* seconds */
-#define ROUTING_ENTRY_MAX_RETRY 5
+#define ROUTING_ENTRY_AGEOUT (30*OS_HZ)  /* seconds */
+#define ROUTING_ENTRY_MAX_RETRY 2
 #define ROUTING_POOL_SIZE 128
 #define ROUTING_HASH_TAB_SIZE 64  /* the legth of hash table must be power of 2. */
 
@@ -53,106 +50,90 @@ enum ROUTING_ENTRY_FLAG {
 #define CLEAR_ROUTING_ENTRY(_x, _y)	     ((_x)->EntryFlag &= ~(_y))
 #define ROUTING_ENTRY_TEST_FLAG(_x, _y)  (((_x)->EntryFlag & (_y)) != 0)
 
-struct _ROUTING_ENTRY {
+typedef struct _ROUTING_ENTRY {
 	struct _ROUTING_ENTRY *pNext;
-	UINT32 EntryFlag;
+    UINT32 EntryFlag;
 	ULONG KeepAliveTime;
-	ULONG RetryTime;
-	UCHAR Retry;
+    UCHAR RetryKeepAlive;
 	UCHAR Valid;
 	UCHAR Wcid;
-	UINT32 IPAddr;
+    UINT32 IPAddr;
 	UCHAR Mac[MAC_ADDR_LEN];
-};
+} ROUTING_ENTRY, *PROUTING_ENTRY;
 
 
 VOID RoutingTabInit(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN UINT32 Flag);
+	IN PRTMP_ADAPTER pAd,
+	IN UINT32 Flag);
 
 VOID RoutingTabDestory(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN UINT32 Flag);
+	IN PRTMP_ADAPTER pAd,
+	IN UINT32 Flag);
 
 VOID RoutingTabClear(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN UINT32 Flag);
+	IN PRTMP_ADAPTER pAd,
+	IN UINT32 Flag);
 
-struct _ROUTING_ENTRY * RoutingTabGetFree(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex);
+PROUTING_ENTRY RoutingTabGetFree(
+	IN PRTMP_ADAPTER pAd);
 
 VOID RoutingTabSetAllFree(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN UCHAR Wcid,
-		IN UINT32 Flag);
+	IN PRTMP_ADAPTER pAd,
+	IN UCHAR Wcid,
+	IN UINT32 Flag);
 
 VOID  RoutingTabSetOneFree(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN PUCHAR pMac,
-		IN UINT32 Flag);
+	IN PRTMP_ADAPTER pAd,
+	IN PUCHAR pMac,
+	IN UINT32 Flag);
 
 VOID RoutingEntryRefresh(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN struct _ROUTING_ENTRY *pRoutingEntry);
+	IN PRTMP_ADAPTER pAd,
+	IN PROUTING_ENTRY pRoutingEntry);
 
 VOID RoutingEntrySet(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN UCHAR Wcid,
-		IN PUCHAR pMac,
-		IN struct _ROUTING_ENTRY *pRoutingEntry);
+	IN PRTMP_ADAPTER pAd,
+	IN UCHAR Wcid,
+	IN PUCHAR pMac,
+	IN PROUTING_ENTRY pRoutingEntry);
 
 INT RoutingTabGetEntryCount(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex);
+	IN PRTMP_ADAPTER pAd);
+
 
 INT32 GetHashID(
-		IN PUCHAR pMac);
+    IN PUCHAR pMac);
 
-struct _ROUTING_ENTRY * GetRoutingTabHead(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN INT32 Index);
+PROUTING_ENTRY GetRoutingTabHead(
+	IN PRTMP_ADAPTER pAd,
+	IN INT32 Index);
 
 BOOLEAN GetRoutingEntryAll(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN UCHAR Wcid,
-		IN UINT32 Flag,
-		IN INT32 BufMaxCount,
-		OUT struct _ROUTING_ENTRY * *pEntryListBuf,
-		OUT PUINT32 pCount);
+	IN PRTMP_ADAPTER pAd,
+	IN UCHAR Wcid,
+	IN UINT32 Flag,
+	IN INT32 BufMaxCount,
+	OUT const ROUTING_ENTRY **pEntryListBuf,
+	OUT PUINT32 pCount);
 
-struct _ROUTING_ENTRY * RoutingTabLookup(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN PUCHAR pMac,
-		IN BOOLEAN bUpdateAliveTime,
-		OUT UCHAR *pWcid);
+PROUTING_ENTRY RoutingTabLookup(
+	IN PRTMP_ADAPTER pAd,
+	IN PUCHAR pMac,
+	IN BOOLEAN bUpdateAliveTime,
+	OUT UCHAR* pWcid);
 
 VOID RoutingTabARPLookupUpdate(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN struct _ROUTING_ENTRY *pRoutingEntry,
-		IN UINT32 ARPSenderIP);
+    IN PRTMP_ADAPTER pAd,
+    IN PUCHAR pData);
 
 INT RoutingEntrySendAliveCheck(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex,
-		IN struct _ROUTING_ENTRY *pRoutingEntry,
-		IN UCHAR *pSrcMAC,
-		IN UINT32 SrcIP);
+    IN PRTMP_ADAPTER pAd,
+    IN PROUTING_ENTRY pRoutingEntry,
+    IN UCHAR *pSrcMAC,
+    IN UINT32 SrcIP);
 
 VOID RoutingTabMaintain(
-		IN struct _RTMP_ADAPTER *pAd,
-		IN UCHAR ifIndex);
+	IN PRTMP_ADAPTER pAd);
 
 #endif /* ROUTING_TAB_SUPPORT */
 #endif /* __ROUTING_TAB_H__ */
