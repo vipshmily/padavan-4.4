@@ -62,12 +62,8 @@ on:
         description: 'select toolchain'
         options:
         - mipsel-linux-musl
-        - mipsel-linux-musl-gcc7
-        - mipsel-linux-musl-gcc13
         - mipsel-linux-uclibc
-        - mipsel-linux-uclibc-gcc7
-        - mipsel-linux-uclibc-gcc13
-        default: mipsel-linux-uclibc
+        default: mipsel-linux-musl
       release:
         type: boolean
         description: 'upload firmware to release'
@@ -83,12 +79,13 @@ jobs:
           key: ${{ inputs.target }}-${{ inputs.toolchain }}
       - uses: actions/setup-go@main
         with:
-          go-version: '1.22.2'
+          go-version: '1.22.3'
           check-latest: true
           cache: false
       - name: Prepare environment
         run: |
           sudo apt update
+          sudo apt upgrade
           sudo apt install libtool-bin gperf python3-docutils autopoint gettext ccache
           sudo timedatectl set-timezone 'Asia/Shanghai'
       - name: Start build firmware
