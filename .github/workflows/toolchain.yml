@@ -1,11 +1,15 @@
+# TurBoTse
+
 name: build toolchain
 
-on: 
+on:
   workflow_dispatch:
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        target: [mipsel-linux-uclibc, mipsel-linux-musl, mipsel-linux-uclibc-gcc7, mipsel-linux-musl-gcc7, mipsel-linux-uclibc-gcc13, mipsel-linux-musl-gcc13]
     steps:
       - uses: actions/checkout@main
       - name: Prepare environment
@@ -17,16 +21,19 @@ jobs:
             libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget libc-dev-bin
       - name: Build toolchain
         run: |
-          make toolchain/build
-          cd toolchain-mipsel/toolchain-4.4.x
-          tar cJf ../mipsel-linux-uclibc-gcc10.5.0.tar.xz *
+          make CT_TARGET=${CT_TARGET}
+          cd toolchain-mipsel
+          tar cJf ../${CT_TARGET}.tar.xz *
+        env:
+          CT_TARGET: ${{ matrix.target }}
+        working-directory: toolchain
       - uses: actions/upload-artifact@main
         with:
-          name: toolchain
-          path: toolchain-mipsel/mipsel-linux-uclibc-gcc10.5.0.tar.xz
+          name: ${{ matrix.target }}
+          path: toolchain/${{ matrix.target }}.tar.xz
       - uses: ncipollo/release-action@main
         with:
-          token: ${{ github.token }}
           tag: toolchain
-          artifacts: toolchain-mipsel/mipsel-linux-uclibc-gcc10.5.0.tar.xz
+          artifacts: toolchain/${{ matrix.target }}.tar.xz
           allowUpdates: true
+          omitBodyDuringUpdate: true

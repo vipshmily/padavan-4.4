@@ -1,14 +1,13 @@
-name: build
+# TurBoTse
 
-on: 
-#  push:
-#    branches:
-#    - "*"
+name: build firmware
+
+on:
   workflow_dispatch:
     inputs:
       target:
         type: choice
-        description: 'Please select the model to compile'
+        description: 'target to compile'
         options:
         - B70
         - BELL-A040WQ
@@ -58,37 +57,50 @@ on:
         - ZTE-E8820S
         - ZTE-E8820V2
         default: K2P
+      toolchain:
+        type: choice
+        description: 'select toolchain'
+        options:
+        - mipsel-linux-musl
+        - mipsel-linux-uclibc
+        default: mipsel-linux-musl
       release:
         type: boolean
-        description: 'upload to release'
+        description: 'upload firmware to release'
         default: true
 jobs:
   build:
-    name: ${{ inputs.target }}
+    name: ${{ inputs.target }}-${{ inputs.toolchain }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@main
       - uses: hendrikmuhs/ccache-action@main
+        with:
+          key: ${{ inputs.target }}-${{ inputs.toolchain }}
       - uses: actions/setup-go@main
         with:
-          go-version: '1.22.2'
+          go-version: '1.22.3'
           check-latest: true
           cache: false
       - name: Prepare environment
         run: |
           sudo apt update
+          sudo apt upgrade
           sudo apt install libtool-bin gperf python3-docutils autopoint gettext ccache
-      - name: Start Build
+          sudo timedatectl set-timezone 'Asia/Shanghai'
+      - name: Start build firmware
         run: |
-          make ${{ inputs.target }}
+          make ${{ inputs.target }} TOOLCHAIN=${{ inputs.toolchain }}
           echo "TAG_ANME=$(date +%Y%m%d)" >> $GITHUB_ENV
       - uses: actions/upload-artifact@main
         with:
-          name: ${{ inputs.target }}-${{ env.TAG_ANME }}
+          name: ${{ inputs.target }}-${{ inputs.toolchain }}
           path: trunk/images/*.trx
       - uses: ncipollo/release-action@main
+        if: ${{ github.event.inputs.release == 'true' }}
         with:
           commit: ${{ github.sha }}
-          tag: Padavan
+          tag: ${{ env.TAG_ANME }}
           artifacts: trunk/images/*.trx
           allowUpdates: true
+          omitBodyDuringUpdate: true
