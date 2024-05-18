@@ -767,8 +767,8 @@ struct nvram_pair router_defaults[] = {
 	{ "sdns_force_qtype_soa", "28 65" },
 	{ "sdns_prefetch_domain", "1" },
 	{ "sdns_exp", "1" },
-	{ "sdns_exp_ttl", "259200" },
-	{ "sdns_exp_ttl_max", "3" },
+	{ "sdns_exp_ttl", "0" },
+	{ "sdns_exp_ttl_max", "10" },
 	{ "sdns_exp_prefetch_time", "21600" },
 	{ "sdns_dualstack_ip_allow_force_aaaa", "1" },
 
@@ -781,7 +781,6 @@ struct nvram_pair router_defaults[] = {
 	{ "sdnse_address", "1" },
 	{ "sdnse_ns", "1" },
 	{ "sdnse_as", "0" },
-	{ "sdnse_ipv6_server", "1" },
 	{ "sdnse_ipc", "1" },
 	{ "sdnse_cache", "1" },
 

@@ -1218,7 +1218,6 @@
 			{"sdnse_address", "", NULL, EVM_RESTART_SMARTDNS},
 			{"sdnse_ns", "", NULL, EVM_RESTART_SMARTDNS},
 			{"sdnse_as", "", NULL, EVM_RESTART_SMARTDNS},
-			{"sdnse_ipv6_server", "", NULL, EVM_RESTART_SMARTDNS},
 			{"sdnse_ipc", "", NULL, EVM_RESTART_SMARTDNS},
 			{"sdnse_cache", "", NULL, EVM_RESTART_SMARTDNS},
 			{"sdns_adblock", "", NULL, EVM_RESTART_SMARTDNS},	

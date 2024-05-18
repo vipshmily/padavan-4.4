@@ -28,7 +28,6 @@ $j(document).ready(function(){
 	init_itoggle('sdns_enable');
 	init_itoggle('sdns_tcp_server');
 	init_itoggle('sdns_ipv6_server');
-	init_itoggle('sdnse_ipv6_server');
 	init_itoggle('sdns_ip_change');
 	init_itoggle('sdns_dualstack_ip_allow_force_aaaa');
 	init_itoggle('sdns_cache_persist');
@@ -706,19 +705,6 @@ function showMRULESList(){
                                                 <div style="position: absolute; margin-left: -10000px;">
                                                     <input type="radio" value="1" name="sdnse_as" id="sdnse_as_1" <% nvram_match_x("", "sdnse_as", "1", "checked"); %>><#checkbox_Yes#>
                                                     <input type="radio" value="0" name="sdnse_as" id="sdnse_as_0" <% nvram_match_x("", "sdnse_as", "0", "checked"); %>><#checkbox_No#>
-                                                </div>
-                                            </td>
-                                        </tr>
-										<tr> <th width="50%"><#SmartDNS24#></th>
-                                            <td>
-                                                <div class="main_itoggle">
-                                                <div id="sdnse_ipv6_server_on_of">
-                                                    <input type="checkbox" id="sdnse_ipv6_server_fake" <% nvram_match_x("", "sdnse_ipv6_server", "1", "value=1 checked"); %><% nvram_match_x("", "sdnse_ipv6_server", "0", "value=0"); %>>
-                                                </div>
-                                                </div>
-                                                <div style="position: absolute; margin-left: -10000px;">
-                                                    <input type="radio" value="1" name="sdnse_ipv6_server" id="sdnse_ipv6_server_1" <% nvram_match_x("", "sdnse_ipv6_server", "1", "checked"); %>><#checkbox_Yes#>
-                                                    <input type="radio" value="0" name="sdnse_ipv6_server" id="sdnse_ipv6_server_0" <% nvram_match_x("", "sdnse_ipv6_server", "0", "checked"); %>><#checkbox_No#>
                                                 </div>
                                             </td>
                                         </tr>

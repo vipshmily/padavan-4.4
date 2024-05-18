@@ -112,7 +112,7 @@ Check_md5 () {
 Check_ss(){
     if [ -s /etc_ro/ss_ip.sh ] ; then
         if [ $(nvram get ss_enable) = 1 ] && [ $(nvram get ss_run_mode) = "router" ] && [ $(nvram get pdnsd_enable) = 0 ] ; then
-            logger -t "SmartDNS" "系统检测到 SS 模式为绕过大陆模式，并且启用了 pdnsd 请先调整 SS 解析使用 SmartDNS +手动配置模式！程序将退出..."
+            logger -t "SmartDNS" "系统检测到 SS 模式为绕过大陆模式，并且启用了 pdnsd 请先调整 SS 解析使用 SmartDNS +手动配置模式！程序将退出！"
             nvram set sdns_enable=0
             exit 0
         fi
@@ -152,7 +152,6 @@ Get_sdns_conf () {
         fi
     fi
     # 【读取配置】
-    Get_sdnse_conf
     echo "cache-size $sdns_cache" >> "$smartdns_tmp_Conf"
     echo "rr-ttl $sdns_rr_ttl" >> "$smartdns_tmp_Conf"
     echo "rr-ttl-min $sdns_rr_ttl_min" >> "$smartdns_tmp_Conf"
@@ -163,7 +162,6 @@ Get_sdns_conf () {
     echo "serve-expired-ttl $sdns_exp_ttl" >> "$smartdns_tmp_Conf"
     echo "serve-expired-reply-ttl $sdns_exp_ttl_max" >> "$smartdns_tmp_Conf"
     echo "serve-expired-prefetch-time $sdns_exp_prefetch_time" >> "$smartdns_tmp_Conf"
-    echo "force-qtype-SOA $sdns_force_qtype_soa" >> "$smartdns_tmp_Conf"
     echo "speed-check-mode $sdns_speed_mode" >> "$smartdns_tmp_Conf"
     if [ "$sdns_ip_change" -eq 1 ] ;then
         echo "dualstack-ip-selection yes" >> "$smartdns_tmp_Conf"
@@ -191,11 +189,6 @@ Get_sdns_conf () {
         echo "ipset-timeout yes" >> "$smartdns_tmp_Conf"
     else
         echo "ipset-timeout no" >> "$smartdns_tmp_Conf"
-    fi
-    if [ "$sdns_force_aaaa_soa" -eq 1 ] && [ " $sdns_cache" -gt 0 ] ;then
-        echo "force-AAAA-SOA yes" >> "$smartdns_tmp_Conf"
-    else
-        echo "force-AAAA-SOA no" >> "$smartdns_tmp_Conf"
     fi
     if [ "$sdns_exp" -eq 1 ] && [ "$sdns_cache" -gt 0 ] ;then
         echo "serve-expired yes" >> "$smartdns_tmp_Conf"
@@ -261,7 +254,7 @@ Get_sdns_conf () {
                 fi    
             fi
             if [ "$sdnss_ipset"x != x ] ; then
-                # 调用 check_ip_Addr 函数，检测 ip 是否合规
+                # 调用 check_ip_Addr 函数，检测 ip 是否合规？
                 Check_ip_addr "$sdnss_ipset"
                 if [ "$?" = "1" ] ;then
                     echo "ipset /$sdnss_ipset/smartdns" >> "$smartdns_tmp_Conf"
@@ -350,9 +343,9 @@ Start_AD () {
 # 【下载广告过滤文件】
     curl -s -o /tmp/sdnsadnew.conf --connect-timeout 10 --retry 3 $(nvram get sdns_adblock_url)
     if [ ! -f "/tmp/sdnsadnew.conf" ]; then
-        logger -t "SmartDNS" "广告过滤功能未开启或者过滤地址失效，网络异常等 ！！！"
+        logger -t "SmartDNS" "广告过滤文件下载失败，可能是地址失效或网络异常等！"
     else
-        logger -t "SmartDNS" "去广告文件下载成功广告过滤功能已启用..."
+        logger -t "SmartDNS" "广告过滤文件下载成功,已启用！"
         if [ -f "/tmp/sdnsadnew.conf" ]; then
             check = `grep -wq "address=" /tmp/sdnsadnew.conf`
             if [ ! -n "$check" ] ; then
@@ -374,7 +367,7 @@ Change_adbyby () {
         if [ $(nvram get adbyby_add) = 1 ] && [ "$hosts_type" != "dnsmasq" ]; then
             nvram set adbyby_add=0
             /usr/bin/adbyby.sh switch
-            logger -t "SmartDNS" "DNS 去广告规则: SmartDNS ⇒ DNSmasq"
+            logger -t "SmartDNS" "(DNS) 去广告规则: SmartDNS ⇒ DNSmasq"
             hosts_type="dnsmasq"
         fi
         ;;
@@ -383,7 +376,7 @@ Change_adbyby () {
             if [ "$sdns_port" = "53" ] || [ $(nvram get adbyby_add) = 1 ] || [ "$sdns_redirect" = "2" ] ; then
                 nvram set adbyby_add=1
                 /usr/bin/adbyby.sh switch
-                logger -t "SmartDNS" "DNS 去广告规则: DNSmasq ⇒ SmartDNS"
+                logger -t "SmartDNS" "(DNS) 去广告规则: DNSmasq ⇒ SmartDNS"
                 hosts_type="SmartDNS"
             fi
         fi
@@ -400,7 +393,7 @@ Change_dnsmasq () {
         sed -i '/server=127.0.0.1#'"$sdns_ported"'/d' "$dnsmasq_Conf"
         sed -i '/port=0/d' "$dnsmasq_Conf"
         if [ "$sdns_enable" = 0 ] ; then
-            [ "$sdns_ported" = "53" ] && logger -t "SmartDNS" "已启用 DNSmasq 域名解析（DNS）功能" 
+            [ "$sdns_ported" = "53" ] && logger -t "SmartDNS" "DNSmasq 域名解析(DNS)功能已启用!" 
             [ "$sdns_redirected" = "1" ] && logger -t "SmartDNS" "删除 DNSmasq 上游服务器：127.0.0.1:$sdns_ported" 
         fi
         ;;
@@ -408,7 +401,7 @@ Change_dnsmasq () {
         # 启动 SmartDNS 时
         if [ "$sdns_port" = "53" ] ; then
             echo "port=0" >> "$dnsmasq_Conf"
-            logger -t "SmartDNS" "已关闭 DNSmasq 域名解析（DNS）功能..."
+            logger -t "SmartDNS" "DNSmasq 域名解析(DNS)功能已关闭！"
             if [ "$sdns_redirect" = "1" ] ; then
                 nvram set sdns_redirect=0
                 sdns_redirect=0
@@ -508,11 +501,11 @@ Start_smartdns () {
     if [ "$sdns_coredump" = "1" ] ; then
         args="$args -S"
     fi
-    # 通过检测配置文件是否变化，确定是否重启 DNSmasq 进程
+    # 通过检测配置文件是否变化，确定是否重启 DNSmasq 进程？
     if [ "$dnsmasq_md5" != $(md5sum  "$dnsmasq_Conf" | awk '{ print $1 }') ] ; then
-        logger -t "SmartDNS" "正在重启 DNSmasq 进程..."
+        logger -t "SmartDNS" "DNSmasq 进程正在重启..."
         /sbin/restart_dhcpd >/dev/null 2>&1
-        logger -t "SmartDNS" "DNSmasq 进程已重启..."
+        logger -t "SmartDNS" "DNSmasq 进程重启完成！"
     fi
     # 启动 smartdns 进程
     "$smartdns_Bin" -f -c "$smartdns_Conf" "$args"  &>/dev/null &
@@ -520,7 +513,7 @@ Start_smartdns () {
     smartdns_process=$(pidof smartdns | awk '{ print $1 }')
     if [ "$smartdns_process"x = x ] ; then
         if [ "$hosts_type" = "SmartDNS" ] ; then
-            logger -t "SmartDNS" "SmartDNS 启动失败..."
+            logger -t "SmartDNS" "SmartDNS 进程启动失败！"
             logger -t "SmartDNS" "删除"$smartdns_Conf"中conf-file附加去广告设置，再次启动..."
             logger -t "SmartDNS" "若启动成功，则请检查相关去广告规则格式是否符合SmartDNS要求？"
             sed -i '/conf-file /d' "$smartdns_Conf"
@@ -530,40 +523,40 @@ Start_smartdns () {
     sleep 1
     smartdns_process=$(pidof smartdns | awk '{ print $1 }')
     if [ "$smartdns_process"x = x ] ; then
-        logger -t "SmartDNS" "SmartDNS 启动失败..."
-        logger -t "SmartDNS" "停用 SmartDNS！请检查其端口配置及自定义配置是否匹配？"
-        logger -t "SmartDNS" "恢复 DNSmasq 提供 DNS 解析..."
+        logger -t "SmartDNS" "SmartDNS 进程启动失败！"
+        logger -t "SmartDNS" "SmartDNS 进程已停止！请检查其端口配置及自定义配置是否匹配？"
+        logger -t "SmartDNS" "DNSmasq 恢复提供域名解析 (DNS)!"
         nvram set sdns_enable=0
         sdns_enable=0
         action="stop"
         Stop_smartdns
         if [ "$dnsmasq_md5" != $(md5sum  "$dnsmasq_Conf" | awk '{ print $1 }') ] ; then
-            logger -t "SmartDNS" "正在重启 DNSmasq 进程..."
+            logger -t "SmartDNS" "DNSmasq 进程正在重启..."
             /sbin/restart_dhcpd >/dev/null 2>&1
-            logger -t "SmartDNS" "DNSmasq 进程已重启..."
+            logger -t "SmartDNS" "DNSmasq 进程重启完成！"
         fi
         exit
     else
-        logger -t "SmartDNS" "SmartDNS 进程已启动..."
+        logger -t "SmartDNS" "SmartDNS 进程已启用！"
     fi
 }
 
 Stop_smartdns () {
     # 【】
     killall -9 smartdns >/dev/null 2>&1
-    logger -t "SmartDNS" "结束 SmartDNS 进程..."
+    logger -t "SmartDNS" "SmartDNS 进程已停止！"
     Change_adbyby
     Change_dnsmasq
     Change_iptable
     if [ "$dnsmasq_md5" != $(md5sum  "$dnsmasq_Conf" | awk '{ print $1 }') ] && [ "$sdns_enable" = 0 ] ; then
-        logger -t "SmartDNS" "正在重启 DNSmasq 进程..."
+        logger -t "SmartDNS" "DNSmasq 进程正在重启..."
         /sbin/restart_dhcpd >/dev/null 2>&1
-        logger -t "SmartDNS" "DNSmasq 进程已重启..."
+        logger -t "SmartDNS" "DNSmasq 进程重启完成！"
     fi
     smartdns_process=$(pidof smartdns | awk '{ print $1 }')
     if [ "$smartdns_process"x = x ] && [ "$sdns_enable" = 0 ] ; then 
         rm  -f "$smartdns_Ini"
-        logger -t "SmartDNS" "SmartDNS 服务器已停用..."
+        logger -t "SmartDNS" "SmartDNS 服务器已停用！"
     fi
 }
 
@@ -572,14 +565,14 @@ Main () {
     case $action in
     start)
         if [ ! -s "$smartdns_Ini" ] ; then
-            logger -t "SmartDNS" "SmartDNS 正在启动..."
+            logger -t "SmartDNS" "SmartDNS 服务器正在启动..."
         fi
         Check_ss
         if [ $(nvram get sdns_adblock) = "1" ]; then
                 Start_AD
         fi
         Start_smartdns
-        logger -t "SmartDNS" "SmartDNS 服务器已启动..."
+        logger -t "SmartDNS" "SmartDNS 服务器启动完成！"
         sleep 2
         echo 3 > /proc/sys/vm/drop_caches
         ;;
@@ -588,10 +581,10 @@ Main () {
         if [ "$smartdns_process"x != x ] ; then
             case $sdns_enable in
             0)
-                logger -t "SmartDNS" "停用 SmartDNS 服务器 ..."
+                logger -t "SmartDNS" "SmartDNS 服务器已停用！"
                 ;;
             1)
-                logger -t "SmartDNS" "重启 SmartDNS 服务器..."
+                logger -t "SmartDNS" "SmartDNS 服务器正在重启..."
                 ;;
             esac
         fi
@@ -608,7 +601,7 @@ Main () {
         fi
         Check_ss
         Start_smartdns
-        logger -t "SmartDNS" "SmartDNS 服务器已重启完成.."
+        logger -t "SmartDNS" "SmartDNS 服务器重启完成！"
         sleep 2
         echo 3 > /proc/sys/vm/drop_caches
         ;;
