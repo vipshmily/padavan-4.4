@@ -1,8 +1,8 @@
-TOPDIR        = ${CURDIR}
+TOPDIR         = ${CURDIR}
 CT_DIR        := $(TOPDIR)/toolchain
 CT_PREFIX     := $(TOPDIR)/toolchain-mipsel
 CT_TARGET     := mipsel-linux-uclibc
-TOOLCHAIN_URL :=https://github.com/TurBoTse/padavan/releases/download/toolchain/$(CT_TARGET).tar.xz
+TOOLCHAIN_URL := https://github.com/vipshmily/padavan-4.4/releases/download/toolchain/$(CT_TARGET).tar.xz
 
 all: build
 

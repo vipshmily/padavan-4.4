@@ -431,9 +431,12 @@ function hideClients_Block(){
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr>
+										<tr>
                                             <td colspan="3">
-                                                <i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('ap_script')"><span><#AP_Relay#></span></a>
+                                                <i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('ap_script')"><span>ap_script<#AP_Relay#></span>
+                                                <div>
+                                                    &nbsp;<span style="color:#888;"><#AP_Relay_1#></span>
+                                                </div></a>
                                                 <div id="ap_script" style="display:none;">
                                                     <textarea rows="24" wrap="off" spellcheck="false" maxlength="314571" class="span12" name="scripts.ap_script.sh" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.ap_script.sh",""); %></textarea>
                                                 </div>
