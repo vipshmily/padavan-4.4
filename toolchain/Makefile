@@ -1,13 +1,21 @@
 TOPDIR         = ${CURDIR}
-CT_DIR        := $(TOPDIR)/toolchain
+CT_VERSION    := 1.26.0
+CT_DIR        := $(TOPDIR)/crosstool-ng-$(CT_VERSION)
 CT_PREFIX     := $(TOPDIR)/toolchain-mipsel
-CT_TARGET     := mipsel-linux-uclibc
+CT_TARGET     := mipsel-linux-musl
+CT_URL        := https://github.com/crosstool-ng/crosstool-ng/releases/download/crosstool-ng-$(CT_VERSION)/crosstool-ng-$(CT_VERSION).tar.xz
 TOOLCHAIN_URL := https://github.com/vipshmily/padavan-4.4/releases/download/toolchain/$(CT_TARGET).tar.xz
 
 all: build
 
 build:
+	@if [ ! -d $(CT_DIR) ]; then \
+		echo "Downloading crosstool-ng..."; \
+		curl -fSsLo- $(CT_URL) | tar Jx; \
+	fi
+
 	@echo "Building toolchain..."
+	cp -r $(TOPDIR)/configs/$(CT_TARGET) $(CT_DIR)/samples
 	@(cd $(CT_DIR); \
 		./bootstrap && \
 		./configure --enable-local && \
@@ -30,7 +38,6 @@ download:
 		mkdir -p $(CT_PREFIX); \
 		curl -fSsLo- $(TOOLCHAIN_URL) | tar Jx -C $(CT_PREFIX); \
 	fi
-
 ifeq ($(CT_TARGET),mipsel-linux-musl)
 	@if [ ! -f $(CT_PREFIX)/$(CT_TARGET)/sysroot/usr/include/sys/queue.h ]; then \
 		echo "Installing sys/queue.h..."; \
