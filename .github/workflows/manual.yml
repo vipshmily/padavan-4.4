@@ -1,13 +1,13 @@
-# TurBoTse
+# Build TurBoTse's kernal4.4 Padavan
 
-name: build firmware
+name: Build Firmware
 
 on:
   workflow_dispatch:
     inputs:
       target:
+        description: 'Select the router device'
         type: choice
-        description: 'target to compile'
         options:
         - B70
         - BELL-A040WQ
@@ -58,27 +58,42 @@ on:
         - ZTE-E8820V2
         default: K2P
       toolchain:
+        description: 'Select the compilation toolchain'
         type: choice
-        description: 'select toolchain'
         options:
         - mipsel-linux-musl
         - mipsel-linux-uclibc
         default: mipsel-linux-musl
+      toolchaingcc:
+        description: 'Select the toolchain gcc version'
+        type: choice
+        options:
+        - mipsel-linux-musl
+        - mipsel-linux-musl-gcc7
+        - mipsel-linux-musl-gcc13
+        - mipsel-linux-uclibc
+        - mipsel-linux-uclibc-gcc7
+        - mipsel-linux-uclibc-gcc13
+        default: mipsel-linux-musl
       release:
         type: boolean
-        description: 'upload firmware to release'
+        description: 'Upload firmware to release'
         default: true
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       target: ${{ matrix.target }}
       toolchain: ${{ matrix.toolchain }}
+      toolchaingcc: ${{ matrix.toolchaingcc }}
+      TOOLCHAIN_ROOT: toolchain/toolchain-mipsel
+      TOOLCHAIN_URL: https://github.com/TurBoTse/padavan/releases/download/toolchain
     strategy:
       matrix:
         include:
           - target: ${{ inputs.target }}
             toolchain: ${{ inputs.toolchain }}
+            toolchaingcc: ${{ inputs.toolchaingcc }}
     steps:
       - uses: actions/checkout@main
       - uses: hendrikmuhs/ccache-action@main
@@ -93,11 +108,14 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libtool-bin gperf python3-docutils autopoint gettext ccache
-          sudo timedatectl set-timezone 'Asia/Shanghai'
+          echo "Compilation_time=$(TZ='Asia/Shanghai' date +%Y%m%d)" >> $GITHUB_ENV
+      - name: Prepare toolchain
+        run: |
+          mkdir -p $TOOLCHAIN_ROOT
+          curl -fSsLo- $TOOLCHAIN_URL/${{ matrix.toolchaingcc }}.tar.xz | tar Jxv -C $TOOLCHAIN_ROOT
       - name: Start build firmware
         run: |
           make ${{ matrix.target }} TOOLCHAIN=${{ matrix.toolchain }}
-          echo "TAG_ANME=$(date +%Y%m%d)" >> $GITHUB_ENV
       - uses: actions/upload-artifact@main
         with:
           name: ${{ matrix.target }}-${{ matrix.toolchain }}
@@ -106,7 +124,11 @@ jobs:
         if: ${{ github.event.inputs.release == 'true' }}
         with:
           commit: ${{ github.sha }}
-          tag: ${{ env.TAG_ANME }}
+          tag: ${{ env.Compilation_time }}
           artifacts: trunk/images/*.trx
           allowUpdates: true
           omitBodyDuringUpdate: true
+      - uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 0
+          keep_minimum_runs: 1

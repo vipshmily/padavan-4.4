@@ -17,7 +17,8 @@ extract_test:
 	fi )
 
 build:
-	( cd $(SRC_NAME)/main; \
+	( sed -i "s/go 1.22/go 1.22.2/g" $(THISDIR)/$(SRC_NAME)/go.mod; \
+	cd $(SRC_NAME)/main; \
 	GOOS=linux GOARCH=mipsle CGO_ENABLED=0 go build -o $(THISDIR)/xray -trimpath -ldflags "-s -w -buildid="; \
 	)
 

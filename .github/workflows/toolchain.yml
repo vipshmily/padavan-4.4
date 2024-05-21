@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         target: [mipsel-linux-uclibc, mipsel-linux-musl, mipsel-linux-uclibc-gcc7, mipsel-linux-musl-gcc7, mipsel-linux-uclibc-gcc13, mipsel-linux-musl-gcc13]
@@ -35,3 +35,7 @@ jobs:
           artifacts: toolchain/${{ matrix.target }}.tar.xz
           allowUpdates: true
           omitBodyDuringUpdate: true
+      - uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 0
+          keep_minimum_runs: 1
