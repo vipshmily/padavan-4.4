@@ -63,7 +63,7 @@ on:
         options:
         - mipsel-linux-musl
         - mipsel-linux-uclibc
-        default: mipsel-linux-musl
+        default: mipsel-linux-uclibc
       toolchaingcc:
         description: 'Select the toolchain gcc version'
         type: choice
@@ -74,7 +74,7 @@ on:
         - mipsel-linux-uclibc
         - mipsel-linux-uclibc-gcc7
         - mipsel-linux-uclibc-gcc13
-        default: mipsel-linux-musl
+        default: mipsel-linux-uclibc
       release:
         type: boolean
         description: 'Upload firmware to release'
