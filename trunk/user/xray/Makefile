@@ -1,5 +1,5 @@
-SRC_NAME := xray-1.8.11
-SRC_URL := https://github.com/XTLS/Xray-core/archive/refs/tags/v1.8.11.tar.gz
+SRC_NAME := xray-1.8.13
+SRC_URL := https://github.com/XTLS/Xray-core/archive/refs/tags/v1.8.13.tar.gz
 
 THISDIR = $(shell pwd)
 
