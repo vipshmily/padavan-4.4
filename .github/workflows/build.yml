@@ -25,21 +25,24 @@ jobs:
           cache: false
       - name: Prepare environment
         run: |
-          sudo apt update
-          sudo apt install libtool-bin gperf python3-docutils autopoint gettext ccache
+          sudo apt-get update && sudo apt-get install -y libtool-bin gperf python3-docutils autopoint gettext ccache
+          echo "FIRMWARE_AUTHOR=TurBoTse" >> $GITHUB_ENV
+          echo "ROOTDIR=${{ github.workspace }}/trunk" >> $GITHUB_ENV
           echo "Compilation_time=$(TZ='Asia/Shanghai' date +%Y%m%d)" >> $GITHUB_ENV
       - name: Start build firmware
         run: |
           make ${{ matrix.target }} TOOLCHAIN=${{ matrix.toolchain }}
+          mkdir -p ${{ env.ROOTDIR }}/firmwares/
+          sudo mv ${{ env.ROOTDIR }}/images/*.trx ${{ env.ROOTDIR }}/firmwares/$FIRMWARE_AUTHOR-${{ matrix.target }}-${{ matrix.toolchain }}${nano}${cpufreq}-${{ env.Compilation_time }}.trx
       - uses: actions/upload-artifact@main
         with:
           name: ${{ matrix.target }}-${{ matrix.toolchain }}
-          path: trunk/images/*.trx
+          path:  trunk/firmwares/*.trx
       - uses: ncipollo/release-action@main
         with:
           commit: ${{ github.sha }}
           tag: ${{ env.Compilation_time }}
-          artifacts: trunk/images/*.trx
+          artifacts: trunk/firmwares/*.trx
           allowUpdates: true
           omitBodyDuringUpdate: true
       - uses: Mattraks/delete-workflow-runs@main

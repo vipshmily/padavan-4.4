@@ -70,15 +70,47 @@ on:
         options:
         - mipsel-linux-musl
         - mipsel-linux-musl-gcc7
-        - mipsel-linux-musl-gcc13
         - mipsel-linux-uclibc
         - mipsel-linux-uclibc-gcc7
-        - mipsel-linux-uclibc-gcc13
         default: mipsel-linux-uclibc
+      cpufreq:
+        description: 'CPU overclocking'
+        type: boolean
+        default: false
+      mt7621_oc:
+        description: '1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2'
+        type: choice
+        options:
+        - '0x312'
+        - '0x362'
+        - '0x372'
+        - '0x3B2'
+      plugins:
+        description: 'String JSON list of plug-ins'
+        required: true
+        type: string
+        default: '{"ss":"n","v2ray":"n","xray":"n","trojan":"n","ssobfs":"n","smartdns":"n","vlmcsd":"n","ttyd":"n","iperf3":"n"}'
+      customization:
+        description: 'String JSON list of Customization'
+        required: true
+        type: string
+        default: '{"lanip":"192.168.2.1","signaccount":"admin","signpassword":"admin","wifi2gssid":"Padavan","wifi2gpsk":"1234567890","wifi5gssid":"Padavan-5G","wifi5gpsk":"1234567890"}'
+      nanoversion:
+        type: boolean
+        description: 'Compile the nano version'
+        default: false
       release:
         type: boolean
         description: 'Upload firmware to release'
         default: true
+      oldworkflow:
+        type: boolean
+        description: 'Delete old workflow runs'
+        default: true
+env:
+  FIRMWARE_AUTHOR: TurBoTse
+  TOOLCHAIN_ROOT: toolchain/toolchain-mipsel
+  TOOLCHAIN_URL: https://github.com/TurBoTse/padavan/releases/download/toolchain
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -86,8 +118,6 @@ jobs:
       target: ${{ matrix.target }}
       toolchain: ${{ matrix.toolchain }}
       toolchaingcc: ${{ matrix.toolchaingcc }}
-      TOOLCHAIN_ROOT: toolchain/toolchain-mipsel
-      TOOLCHAIN_URL: https://github.com/TurBoTse/padavan/releases/download/toolchain
     strategy:
       matrix:
         include:
@@ -98,7 +128,7 @@ jobs:
       - uses: actions/checkout@main
       - uses: hendrikmuhs/ccache-action@main
         with:
-          key: ${{ matrix.target }}-${{ matrix.toolchain }}
+          key: ${{ matrix.target }}-${{ matrix.toolchaingcc }}
       - uses: actions/setup-go@main
         with:
           go-version: '1.22.2'
@@ -106,29 +136,99 @@ jobs:
           cache: false
       - name: Prepare environment
         run: |
-          sudo apt update
-          sudo apt install libtool-bin gperf python3-docutils autopoint gettext ccache
+          sudo apt-get update && sudo apt-get install -y libtool-bin gperf python3-docutils autopoint gettext ccache
+          echo "ROOTDIR=${{ github.workspace }}/trunk" >> $GITHUB_ENV
+          echo "CONFIG_FILE=${{ github.workspace }}/trunk/.config" >> $GITHUB_ENV
+          echo "CONFIG_DIR=${{ github.workspace }}/trunk/configs/templates" >> $GITHUB_ENV
           echo "Compilation_time=$(TZ='Asia/Shanghai' date +%Y%m%d)" >> $GITHUB_ENV
       - name: Prepare toolchain
         run: |
-          mkdir -p $TOOLCHAIN_ROOT
-          curl -fSsLo- $TOOLCHAIN_URL/${{ matrix.toolchaingcc }}.tar.xz | tar Jxv -C $TOOLCHAIN_ROOT
+          mkdir -p ${{ github.workspace }}/$TOOLCHAIN_ROOT
+          curl -fSsLo- $TOOLCHAIN_URL/${{ matrix.toolchaingcc }}.tar.xz | tar Jxv -C ${{ github.workspace }}/$TOOLCHAIN_ROOT
+      - name: Parse the string JSON list
+        run: |
+          echo "lanip=${{fromJson(inputs.customization).lanip}}" >> $GITHUB_ENV
+          echo "signaccount=${{fromJson(inputs.customization).signaccount}}" >> $GITHUB_ENV
+          echo "signpassword=${{fromJson(inputs.customization).signpassword}}" >> $GITHUB_ENV
+          echo "wifi2gssid=${{fromJson(inputs.customization).wifi2gssid}}" >> $GITHUB_ENV
+          echo "wifi2gpsk=${{fromJson(inputs.customization).wifi2gpsk}}" >> $GITHUB_ENV
+          echo "wifi5gssid=${{fromJson(inputs.customization).wifi5gssid}}" >> $GITHUB_ENV
+          echo "wifi5gpsk=${{fromJson(inputs.customization).wifi5gpsk}}" >> $GITHUB_ENV
+          # plugins
+          echo "ss=${{fromJson(inputs.plugins).ss}}" >> $GITHUB_ENV
+          echo "v2ray=${{fromJson(inputs.plugins).v2ray}}" >> $GITHUB_ENV
+          echo "xray=${{fromJson(inputs.plugins).xray}}" >> $GITHUB_ENV
+          echo "trojan=${{fromJson(inputs.plugins).trojan}}" >> $GITHUB_ENV
+          echo "ssobfs=${{fromJson(inputs.plugins).ssobfs}}" >> $GITHUB_ENV
+          echo "smartdns=${{fromJson(inputs.plugins).smartdns}}" >> $GITHUB_ENV
+          echo "vlmcsd=${{fromJson(inputs.plugins).vlmcsd}}" >> $GITHUB_ENV
+          echo "ttyd=${{fromJson(inputs.plugins).ttyd}}" >> $GITHUB_ENV
+          echo "iperf3=${{fromJson(inputs.plugins).iperf3}}" >> $GITHUB_ENV
+      - name: Compile the nano version
+        if: ${{ github.event.inputs.nanoversion == 'true' }}
+        run: |
+          cd ${{ env.ROOTDIR }}
+          for M in ${{ matrix.target }}; do if [ -f ${{ env.CONFIG_DIR }}/$M.config ]; then \
+            for MOD in ANTFS FAT EXFAT EXT2 EXT3 EXT4 XFS FUSE SWAP; do
+              sed -i "s/CONFIG_FIRMWARE_ENABLE_${MOD}=y/CONFIG_FIRMWARE_ENABLE_${MOD}=n/"  ${{ env.CONFIG_DIR }}/$M.config; done; \
+            for MOD in UVC HID SERIAL AUDIO XFRM QOS IMQ IFB NFSD NFSC CIFS NTFS_3G LPRD U2EC TCPDUMP HDPARM PARTED SMBD WINS SMBD_SYSLOG FTPD RPL2TP EAP_PEAP HTTPS SFTP DROPBEAR_FAST_CODE OPENSSH OPENVPN SSWAN OPENSSL_EC OPENSSL_EXE XUPNPD MINIDLNA FIREFLY FFMPEG_NEW TRANSMISSION TRANSMISSION_WEB_CONTROL ARIA ARIA_WEB_CONTROL CURL SCUTCLIENT GDUT_DRCOM DOGCOM MINIEAP NJIT_CLIENT SOFTETHERVPN_SERVER SOFTETHERVPN_CLIENT SOFTETHERVPN_CMD VLMCSD TTYD LITE LRZSZ HTOP NANO IPERF3 DUMP1090 RTL_SDR MTR SOCAT SRELAY MENTOHUST FRPC FRPS REDSOCKS SHADOWSOCKS XRAY V2RAY TROJAN SSOBFS ADBYBY DNSFORWARDER SMARTDNS ADGUARDHOME ZEROTIER ALIDDNS DDNSTO ALDRIVER SQM WIREGUARD; do
+              sed -i "s/CONFIG_FIRMWARE_INCLUDE_${MOD}=y/CONFIG_FIRMWARE_INCLUDE_${MOD}=n/" ${{ env.CONFIG_DIR }}/$M.config; done; \
+          fi; done
+      - name: Modify and customize
+        run: |
+          sed -i '/cp -f/d' ${{ github.workspace }}/Makefile
+          cd ${{ env.ROOTDIR }}
+          sudo chmod +x ./custom/scripts/*.sh
+          bash ./custom/scripts/setip.sh ${{ env.lanip }} ./user/shared/defaults.h ./user/www/dict/CN.dict
+          bash ./custom/scripts/setaccount.sh ${{ env.signaccount }} ${{ env.signpassword }} ./user/shared/defaults.h
+          bash ./custom/scripts/setwifi.sh ${{ env.wifi2gssid }} ${{ env.wifi2gpsk }} ${{ env.wifi5gssid }} ${{ env.wifi5gpsk }} ./user/shared/defaults.h
+          if [ ! -f ${{ env.CONFIG_DIR }}/${{ matrix.target }}.config ] ; then
+            echo "${{ env.CONFIG_DIR }}/${{ matrix.target }}.config not found"
+          exit 1
+          fi
+          cp -f ${{ env.CONFIG_DIR }}/${{ matrix.target }}.config ${{ env.CONFIG_FILE }}
+          # include plugin
+          echo "CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS=${{env.ss}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_V2RAY=${{env.v2ray}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_XRAY=${{env.xray}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_TROJAN=${{env.trojan}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_SSOBFS=${{env.ssobfs}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNS=${{env.smartdns}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=${{env.vlmcsd}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_IPSET=${{env.ipset}}" >> ${{ env.CONFIG_FILE }}
+          echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=${{env.iperf3}}" >> ${{ env.CONFIG_FILE }}
+          # cpufreq
+          if ${{ github.event.inputs.cpufreq == 'true' }}; then
+            echo "CONFIG_FIRMWARE_INCLUDE_OC=y" >> ${{ env.CONFIG_FILE }}
+            echo 'CONFIG_FIRMWARE_MT7621_OC="${{ inputs.mt7621_oc }}"' >> ${{ env.CONFIG_FILE }}
+          fi
       - name: Start build firmware
         run: |
           make ${{ matrix.target }} TOOLCHAIN=${{ matrix.toolchain }}
+          nano=""
+          if ${{ github.event.inputs.nanoversion == 'true' }}; then
+            nano="-nano"
+          fi
+          cpufreq=""
+          if ${{ github.event.inputs.cpufreq == 'true' }}; then
+            cpufreq="-cpufreq-${{ inputs.mt7621_oc }}"
+          fi
+          mkdir -p ${{ env.ROOTDIR }}/firmwares/
+          sudo mv ${{ env.ROOTDIR }}/images/*.trx ${{ env.ROOTDIR }}/firmwares/$FIRMWARE_AUTHOR-${{ matrix.target }}-${{ matrix.toolchaingcc }}${nano}${cpufreq}-${{ env.Compilation_time }}.trx
       - uses: actions/upload-artifact@main
         with:
-          name: ${{ matrix.target }}-${{ matrix.toolchain }}
-          path: trunk/images/*.trx
+          name: ${{ matrix.target }}-${{ matrix.toolchaingcc }}
+          path:  trunk/firmwares/*.trx
       - uses: ncipollo/release-action@main
         if: ${{ github.event.inputs.release == 'true' }}
         with:
           commit: ${{ github.sha }}
           tag: ${{ env.Compilation_time }}
-          artifacts: trunk/images/*.trx
+          artifacts: trunk/firmwares/*.trx
           allowUpdates: true
           omitBodyDuringUpdate: true
       - uses: Mattraks/delete-workflow-runs@main
+        if: ${{ github.event.inputs.oldworkflow == 'true' }}
         with:
           retain_days: 0
           keep_minimum_runs: 1
