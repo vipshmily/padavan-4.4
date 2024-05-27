@@ -1,0 +1,138 @@
+# Build TurBoTse's kernal4.4 Padavan
+
+name: Build Firmware
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Select the router device'
+        type: choice
+        options:
+        - B70
+        - BELL-A040WQ
+        - C-Life-XG1
+        - CR660x
+        - DIR-878
+        - DIR-882
+        - EA7500
+        - G-AX1800
+        - GHL
+        - HAR-20S2U1
+        - JCG-836PRO
+        - JCG-AC860M
+        - JCG-Q11Pro
+        - JCG-Q20
+        - JCG-Q20-PB
+        - JCG-Y2
+        - K2P
+        - K2P-NANO
+        - K2P-USB
+        - MI-4
+        - MI-R3G
+        - MI-R3P-PB
+        - MI-R3P-SPI
+        - MI-R3P
+        - MI-R4A
+        - MR2600
+        - MSG1500
+        - MSG1500-Z
+        - NETGEAR-BZV
+        - NETGEAR-R6800
+        - NETGEAR-R7450
+        - NEWIFI
+        - NEWIFI3
+        - QM-B1
+        - R2100
+        - RE-CP-02
+        - RE-SP-01B
+        - RM2100
+        - RT-AC85P
+        - SIM-AX1800T
+        - TX1801
+        - WE410443-TC
+        - WIA3300-10
+        - WR1200JS
+        - XY-C1
+        - ZTE-E8820S
+        - ZTE-E8820V2
+        default: K2P
+      toolchain:
+        description: 'Select the compilation toolchain'
+        type: choice
+        options:
+        - mipsel-linux-musl
+        - mipsel-linux-uclibc
+        default: mipsel-linux-uclibc
+      toolchaingcc:
+        description: 'Select the toolchain gcc version'
+        type: choice
+        options:
+        - mipsel-linux-musl
+        - mipsel-linux-musl-gcc7
+        - mipsel-linux-musl-gcc13
+        - mipsel-linux-uclibc
+        - mipsel-linux-uclibc-gcc7
+        - mipsel-linux-uclibc-gcc13
+        default: mipsel-linux-uclibc
+      release:
+        type: boolean
+        description: 'Upload firmware to release'
+        default: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      target: ${{ matrix.target }}
+      toolchain: ${{ matrix.toolchain }}
+      toolchaingcc: ${{ matrix.toolchaingcc }}
+      TOOLCHAIN_ROOT: toolchain/toolchain-mipsel
+      TOOLCHAIN_URL: https://github.com/vipshmily/padavan-4.4/releases/download/toolchain
+    strategy:
+      matrix:
+        include:
+          - target: ${{ inputs.target }}
+            toolchain: ${{ inputs.toolchain }}
+            toolchaingcc: ${{ inputs.toolchaingcc }}
+    steps:
+      - uses: actions/checkout@main
+      - uses: hendrikmuhs/ccache-action@main
+        with:
+          key: ${{ matrix.target }}-${{ matrix.toolchain }}
+      - uses: actions/setup-go@main
+        with:
+          go-version: '1.22'
+          check-latest: true
+          cache: false
+      - uses: actions/setup-node@main
+        with:
+          node-version: 20
+          check-latest: true
+      - name: Prepare environment
+        run: |
+          sudo apt update
+          sudo apt install libtool-bin gperf python3-docutils autopoint gettext ccache
+          echo "Compilation_time=$(TZ='Asia/Shanghai' date +%Y%m%d)" >> $GITHUB_ENV
+      - name: Prepare toolchain
+        run: |
+          mkdir -p $TOOLCHAIN_ROOT
+          curl -fSsLo- $TOOLCHAIN_URL/${{ matrix.toolchaingcc }}.tar.xz | tar Jxv -C $TOOLCHAIN_ROOT
+      - name: Start build firmware
+        run: |
+          make ${{ matrix.target }} TOOLCHAIN=${{ matrix.toolchain }}
+      - uses: actions/upload-artifact@main
+        with:
+          name: ${{ matrix.target }}-${{ matrix.toolchain }}
+          path: trunk/images/*.trx
+      - uses: ncipollo/release-action@main
+        if: ${{ github.event.inputs.release == 'true' }}
+        with:
+          commit: ${{ github.sha }}
+          tag: ${{ env.Compilation_time }}
+          artifacts: trunk/images/*.trx
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+      - uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 0
+          keep_minimum_runs: 1
