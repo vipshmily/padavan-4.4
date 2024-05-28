@@ -1225,12 +1225,12 @@
 			{"sdns_white", "", NULL, EVM_RESTART_SMARTDNS},
 			{"sdns_black", "", NULL, EVM_RESTART_SMARTDNS},
 			{"sdns_coredump", "", NULL, EVM_RESTART_SMARTDNS},	
-			{"sdns_staticnum_x", "", NULL, EVM_RESTART_SMARTDNS},
+			{"sdnss_staticnum_x", "", NULL, EVM_RESTART_SMARTDNS},
 			{"scripts.smartdns_address.conf", "File", NULL, EVM_RESTART_SMARTDNS},
 			{"scripts.smartdns_blacklist-ip.conf", "File", NULL, EVM_RESTART_SMARTDNS},
 			{"scripts.smartdns_whitelist-ip.conf", "File", NULL, EVM_RESTART_SMARTDNS},
 			{"scripts.smartdns_custom.conf", "File", NULL, EVM_RESTART_SMARTDNS},
-			{"SdnsList", "Group", ARGV((char*)variables_SmartdnsConf_SdnsList, "8", "55", "sdns_staticnum_x"), EVM_RESTART_SMARTDNS},
+			{"SdnsList", "Group", ARGV((char*)variables_SmartdnsConf_SdnsList, "8", "55", "sdnss_staticnum_x"), EVM_RESTART_SMARTDNS},
 		};
 #endif
 	struct variable variables_WLANConfig11b[] = {

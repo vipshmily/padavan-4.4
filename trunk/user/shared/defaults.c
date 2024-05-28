@@ -440,12 +440,12 @@ struct nvram_pair router_defaults[] = {
 	{ "ip6_wan_size", "64" },
 	{ "ip6_wan_gate", "" },
 
-	{ "ip6_dns_auto", "1" },
+	{ "ip6_dns_auto", "0" },
 	{ "ip6_dns1", "" },
 	{ "ip6_dns2", "" },
 	{ "ip6_dns3", "" },
 
-	{ "ip6_lan_auto", "1" },
+	{ "ip6_lan_auto", "0" },
 	{ "ip6_lan_addr", "fc00:101:101::1" },
 	{ "ip6_lan_size", "64" },
 	{ "ip6_lan_radv", "1" },
@@ -741,7 +741,7 @@ struct nvram_pair router_defaults[] = {
 	/*SmartDNS*/
 	{ "sdns_enable", "0" },
 	{ "sdns_name", "smartdns" },
-	{ "sdns_port", "53" },
+	{ "sdns_port", "6053" },
 	{ "sdns_tcp_server", "1" },
 	{ "sdns_ipv6_server", "1" },
 	{ "sdns_redirect", "1" },
@@ -750,7 +750,7 @@ struct nvram_pair router_defaults[] = {
 	{ "sdns_tcp_idle_time","120"},
 	{ "sdns_rr_ttl", "300" },
 	{ "sdns_rr_ttl_min", "60" },
-	{ "sdns_rr_ttl_max", "3600" },
+	{ "sdns_rr_ttl_max", "86400" },
 	{ "sdns_rr_ttl_reply_max", "60" },
 	{ "sdns_max_reply_ip_num", "3" },
 
@@ -764,7 +764,7 @@ struct nvram_pair router_defaults[] = {
 	{ "sdns_ip_change", "1" },
 	{ "sdns_ip_change_time", "10" },
 	{ "sdns_force_aaaa_soa", "1" },
-	{ "sdns_force_qtype_soa", "28 65" },
+	{ "sdns_force_qtype_soa", "1-23,48-64" },
 	{ "sdns_prefetch_domain", "1" },
 	{ "sdns_exp", "1" },
 	{ "sdns_exp_ttl", "0" },
@@ -789,7 +789,7 @@ struct nvram_pair router_defaults[] = {
 	{ "sdns_white", "0" },
 	{ "sdns_black", "0" },
 	{ "sdns_coredump", "0" },
-	{ "sdns_staticnum_x", "0" },
+	{ "sdnss_staticnum_x", "0" },
 #endif
 
 #if defined(APP_WYY)

@@ -2,6 +2,7 @@
 # Copyright (C) 2018 Nick Peng (pymumu@gmail.com)
 # Copyright (C) 2019 chongshengB (bkye@vip.qq.com)
 # Copyright (C) 2022 TurBoTse (860018505@qq.com)
+# Copyright (C) 2024 vipshmily (1539755232@qq.com)
 #
 action="$1"
 storage_Path="/etc/storage"
@@ -48,7 +49,7 @@ sdns_exp_ttl_max=$(nvram get sdns_exp_ttl_max)
 sdns_exp_prefetch_time=$(nvram get sdns_exp_prefetch_time)
 sdnse_enable=$(nvram get sdnse_enable)
 sdnse_port=$(nvram get sdnse_port)
-sdnse_tcp=$(nvram get sdnse_tcp)
+sdnse_tcp_server=$(nvram get sdnse_tcp_server)
 sdnse_speed=$(nvram get sdnse_speed)
 sdnse_name=$(nvram get sdnse_name)
 sdnse_address=$(nvram get sdnse_address)
@@ -152,6 +153,7 @@ Get_sdns_conf () {
         fi
     fi
     # 【读取配置】
+    Get_sdnse_conf
     echo "cache-size $sdns_cache" >> "$smartdns_tmp_Conf"
     echo "rr-ttl $sdns_rr_ttl" >> "$smartdns_tmp_Conf"
     echo "rr-ttl-min $sdns_rr_ttl_min" >> "$smartdns_tmp_Conf"
@@ -176,7 +178,7 @@ Get_sdns_conf () {
     fi
     if [ "$sdns_cache_persist" -eq 1 ] && [ "$sdns_cache" -gt 0 ] ;then
         echo "cache-persist yes" >> "$smartdns_tmp_Conf"
-        echo "cache-file /tmp/smartdns.cache" >> "$smartdns_tmp_Conf"
+        echo "cache-file /etc/storage/smartdns.cache" >> "$smartdns_tmp_Conf"
     else
         echo "cache-persist no" >> "$smartdns_tmp_Conf"
     fi
@@ -199,7 +201,7 @@ Get_sdns_conf () {
         echo "conf-file /tmp/anti-ad-for-smartdns.conf" >> "$smartdns_tmp_Conf"
     fi
     echo "log-level error" >> "$smartdns_tmp_Conf"
-    listnum=$(nvram get sdns_staticnum_x)
+    listnum=$(nvram get sdnss_staticnum_x)
     for i in $(seq 1 "$listnum")
     do
         j=$(expr "$i" - 1)
@@ -307,7 +309,7 @@ Get_sdnse_conf () {
     if [ "$sdnse_cache" = "1" ] ; then
         ARGS_2="$ARGS_2-no-cache"
     fi
-    if [ "$sdnse_ipv6_server" = "1" ] ; then
+    if [ "$sdns_ipv6_server" = "1" ] ; then
         ADDR="[::]"
     else
         ADDR=""

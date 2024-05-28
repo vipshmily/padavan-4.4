@@ -158,7 +158,7 @@ function getHash(){
                                         <div id="tabMenu" class="submenuBlock"></div>
                                         <div class="alert alert-info" style="margin: 10px;">
 										注意：因7621性能所限,大于500M宽带开启硬件QOS，并不要手动关闭硬件加速！
-                                        <input type="button" id="btn_reconnect" class="btn btn-info" value="<#CTL_refresh#>" onclick="window.location.reload();">
+                                        <input type="button" id="btn_reconnect" class="btn btn-info" value="刷新页面" onclick="window.location.reload();">
                                         </div>
                                    </div>
 

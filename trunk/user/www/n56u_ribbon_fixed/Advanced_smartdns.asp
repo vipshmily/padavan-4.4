@@ -299,7 +299,7 @@ function showMRULESList(){
                                 <div class="row-fluid">
                                     <div id="tabMenu" class="submenuBlock"></div>
 									<div class="alert alert-info" style="margin: 10px;"><input type="button" class="btn btn-success" value="SmartDNS官网" onclick="window.open('https://github.com/pymumu/smartdns')" size="0"><br />
-									</br><#SmartDNS_6#><input type="button" id="btn_reconnect" class="btn btn-info" value="<#CTL_refresh#>" onclick="window.location.reload();">
+									</br><#SmartDNS_6#> <input type="button" id="btn_reconnect" class="btn btn-info" value="刷新页面" onclick="window.location.reload();">
 									</div>
                                 </div>
                                     <div id="wnd_sm_cfg">
@@ -380,7 +380,7 @@ function showMRULESList(){
                                                     <input type="checkbox" id="sdns_cache_persist_fake" <% nvram_match_x("", "sdns_cache_persist", "1", "value=1 checked"); %><% nvram_match_x("", "sdns_cache_persist", "0", "value=0"); %>>
                                                 </div>
 												</div>
-                                                <div><span style="color:#888;">cache-file /tmp/smartdns.cache</span></div>
+                                                <div><span style="color:#888;">cache-file /etc/storage/smartdns.cache</span></div>
                                                 <div style="position: absolute; margin-left: -10000px;">
                                                     <input type="radio" value="1" name="sdns_cache_persist" id="sdns_cache_persist_1" <% nvram_match_x("", "sdns_cache_persist", "1", "checked"); %>><#checkbox_Yes#>
                                                     <input type="radio" value="0" name="sdns_cache_persist" id="sdns_cache_persist_0" <% nvram_match_x("", "sdns_cache_persist", "0", "checked"); %>><#checkbox_No#>

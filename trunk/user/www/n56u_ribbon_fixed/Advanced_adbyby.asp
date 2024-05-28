@@ -463,7 +463,7 @@ function changeBgColorrl(obj, num){
 									<div>anti-AD项目地址：<a href="https://github.com/privacy-protection-tools/anti-AD">https://github.com/privacy-protection-tools/anti-AD</a></div>
 									<div>静态规则：【<% nvram_get_x("", "adbyby_ltime"); %>】 | 视频规则：【<% nvram_get_x("", "adbyby_vtime"); %>】</div>
 									<div>anti-AD规则：【<% nvram_get_x("", "anti_ad_count"); %>】条 | Hosts AD：【<% nvram_get_x("", "adbyby_hostsad"); %>】条</div>
-									<div>第三方规则：【<% nvram_get_x("", "adbyby_user"); %>】条 <input type="button" id="btn_reconnect" class="btn btn-info" value="<#CTL_refresh#>" onclick="window.location.reload();"></div>
+									<div>第三方规则：【<% nvram_get_x("", "adbyby_user"); %>】条 <input type="button" id="btn_reconnect" class="btn btn-info" value="刷新页面" onclick="window.location.reload();"></div>
 									</div>
 									<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 									<tr> <th><#adbyby6#>:</th>
