@@ -2,6 +2,8 @@
 
 This project is based on original rt-n56u with latest mtk 4.4.198 kernel, which is fetch from D-LINK GPL code.
 
+#### Extra functions / changes
+- AP Relay auto-daemon
 ##### Enhancements in this repo
 
 - commits has beed rewritten on top of [hanwckf/rt-n56u](https://github.com/hanwckf/rt-n56u) repo for better history tracking

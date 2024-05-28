@@ -1969,3 +1969,4 @@ SmartDNS30_1=单位：秒，“0”表示停用预取周期功能，输入相应
 SmartDNS31=启用
 SmartDNS32=跳过双栈优选
 SmartDNS33=跳过Cache
+AP_Relay=中继增强 (自动搜索 切换 信道 信号)【点击打开配置脚本】
