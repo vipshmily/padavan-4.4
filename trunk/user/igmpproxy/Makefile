@@ -1,5 +1,5 @@
-SRC_NAME = igmpproxy-0.4
-SRC_URL = https://github.com/pali/igmpproxy/releases/download/0.4/igmpproxy-0.4.tar.gz
+SRC_NAME = igmpproxy-0.3
+SRC_URL = https://github.com/pali/igmpproxy/releases/download/0.3/$(SRC_NAME).tar.gz
 
 all: download_test extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)

@@ -154,9 +154,9 @@ struct nvram_pair router_defaults[] = {
 	{ "http_lanport", "80" },		/* HTTP LAN port to listen on */
 	{ "https_lport", "443" },		/* HTTPS LAN port to listen on */
 	{ "https_clist", DEF_HTTPS_CIPH_LIST },	/* HTTPS SSL cipher list */
-	{ "fw_dos_x", "0" },			// oleg patch
-	{ "dr_enable_x", "1" },			// oleg patch
-	{ "mr_enable_x", "1" },			// oleg patch
+	{ "fw_dos_x", "0" },			/* DoS Attacks Protection */
+	{ "dr_enable_x", "1" },			/* Use DHCP Routes */
+	{ "mr_enable_x", "1" },			/* Multicast Routing to LAN */
 	{ "mr_qleave_x", "1" },
 
 #if BOARD_HAS_5G_RADIO
@@ -455,7 +455,7 @@ struct nvram_pair router_defaults[] = {
 	{ "ip6_lan_sfpe", "4352" }, // 0x1100
 
 	{ "upnp_enable_x", "1" },
-	{ "upnp_proto", "2" },
+	{ "upnp_proto", "0" },
 	{ "upnp_secure", "1" },
 	{ "upnp_clean_min", "10" },
 	{ "upnp_clean_int", "600" },
@@ -741,11 +741,11 @@ struct nvram_pair router_defaults[] = {
 	/*SmartDNS*/
 	{ "sdns_enable", "0" },
 	{ "sdns_name", "smartdns" },
-	{ "sdns_port", "6053" },
+	{ "sdns_port", "53" },
 	{ "sdns_tcp_server", "1" },
 	{ "sdns_ipv6_server", "1" },
 	{ "sdns_redirect", "1" },
-	{ "sdns_cache", "5120" },
+	{ "sdns_cache", "32768" },
 	{ "sdns_cache_persist", "1" },
 	{ "sdns_tcp_idle_time","120"},
 	{ "sdns_rr_ttl", "300" },
@@ -762,19 +762,19 @@ struct nvram_pair router_defaults[] = {
 	{ "sdns_ipset_timeout", "1" },
 	{ "sdns_as", "0" },
 	{ "sdns_ip_change", "1" },
-	{ "sdns_ip_change_time", "15" },
-	{ "sdns_force_aaaa_soa", "0" },
-	{ "sdns_force_qtype_soa", "65" },
+	{ "sdns_ip_change_time", "10" },
+	{ "sdns_force_aaaa_soa", "1" },
+	{ "sdns_force_qtype_soa", "28 65" },
 	{ "sdns_prefetch_domain", "1" },
 	{ "sdns_exp", "1" },
-	{ "sdns_exp_ttl", "345600" },
-	{ "sdns_exp_ttl_max", "5" },
-	{ "sdns_exp_prefetch_time", "43200" },
-	{ "sdns_dualstack_ip_allow_force_AAAA", "1" },
+	{ "sdns_exp_ttl", "259200" },
+	{ "sdns_exp_ttl_max", "3" },
+	{ "sdns_exp_prefetch_time", "21600" },
+	{ "sdns_dualstack_ip_allow_force_aaaa", "1" },
 
 	{ "sdnse_enable", "0" },
 	{ "sdnse_port", "7053" },
-	{ "sdnse_tcp", "1" },
+	{ "sdnse_tcp_server", "1" },
 	{ "sdnse_name", "oversea" },
 	{ "sdnse_speed", "1" },
 	{ "sdnse_ipset", "0" },
@@ -872,6 +872,7 @@ struct nvram_pair router_defaults[] = {
 	{ "dhcp_dns2_x", "" },
 	{ "dhcp_dns3_x", "" },
 	{ "dhcp_dnsv6_x", "" },
+	{ "dhcp_dnsv61_x", "" },
 	{ "dhcp_wins_x", "" },
 	{ "redirect_all_dns", "0" },		/* Redirect all clients DNS requests */
 	{ "dhcp_filter_aaaa", "0" },

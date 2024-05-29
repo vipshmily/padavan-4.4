@@ -32,6 +32,7 @@
 #include <shutils.h>
 #include <notify_rc.h>
 #include <bin_sem_asus.h>
+#include <time.h>
 
 /* do not set current year, it used for ntp done check! */
 #define SYS_START_YEAR			2015
@@ -549,6 +550,7 @@ void start_vlmcsd(void);
 void restart_vlmcsd(void);
 #endif
 #if defined(APP_IPERF3)
+int is_iperf3_run(void);
 void stop_iperf3(void);
 void start_iperf3(void);
 void restart_iperf3(void);

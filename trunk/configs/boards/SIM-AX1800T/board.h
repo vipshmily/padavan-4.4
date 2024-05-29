@@ -1,3 +1,5 @@
+/* SIM-AX1800T */
+
 #define BOARD_PID		"SIM-AX1800T"
 #define BOARD_NAME		"SIM-AX1800T"
 #define BOARD_DESC		"SIM AX18T Wireless Router"

@@ -99,6 +99,13 @@
 			}
 			});
 		});
+function ClearssrplusLog(){
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' ClearssrplusLog ',
+	});
+}
 function ctime() {
 var t=0;
 c=null;
@@ -1579,7 +1586,6 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 													<tr>
 														<th width="50%"><#InetControl#></th>
 														<td>
-															<input type="button" id="btn_reconnect" class="btn btn-info" value="<#CTL_refresh#>" onclick="window.location.reload();">
 															<input type="button" id="btn_reconnect" class="btn btn-info" value="<#Connect#>" onclick="submitInternet('Reconnect');">
 														</td>
 													</tr>
@@ -1746,7 +1752,7 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 											<!--节点列表-->
 											<div id="wnd_ss_add">
 												<table width="100%" cellpadding="4" cellspacing="0" class="table">
-													<div class="alert alert-info" style="margin: 10px;"> 添加完节点地址后，请先点击下方的 “应用设置” 再点击 “更新节点” 按钮更新所订阅的节点。</div>
+													<div class="alert alert-info" style="margin: 10px;"> 添加完节点地址后，请先点击上方的 “应用” 再点击 “更新节点” 按钮更新所订阅的节点。</div>
 													<tr>
 														<td colspan="3">
 															<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('script7')"><span>点击输入节点订阅地址：(一行一个地址)</span></a>
@@ -1755,37 +1761,39 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 															</div>
 														</td>
 													</tr>
-													<tr id="ss_schedule_enable_tr" width="50%">
-														<th width="50%"><#ss_schedule_enable_tr#></th>
+													<tr id="ss_schedule_enable_tr">
+														<th width="50%" style="border-top: 0 none;"><#ss_schedule_enable_tr#></th>
 														<td>
 															<div class="main_itoggle">
 																<div id="ss_schedule_enable_on_of">
-																	<input type="checkbox" id="ss_schedule_enable_fake"<% nvram_match_x("", "ss_schedule_enable", "1", "value=1 checked"); %><% nvram_match_x("", "ss_schedule_enable", "0", "value=0"); %>>
+																	<input type="checkbox" id="ss_schedule_enable_fake" <% nvram_match_x("", "ss_schedule_enable", "1", "value=1 checked"); %><% nvram_match_x("", "ss_schedule_enable", "0", "value=0"); %>>
 																</div>
 															</div>
 															<div style="position: absolute; margin-left: -10000px;">
-																<input type="radio" name="ss_schedule_enable_x" id="ss_schedule_enable_1" class="input" value="1" <% nvram_match_x("", "ss_schedule_enable", "1", "checked"); %> /><#checkbox_Yes#>
-																<input type="radio" name="ss_schedule_enable_x" id="ss_schedule_enable_0" class="input" value="0" <% nvram_match_x("", "ss_schedule_enable", "0", "checked"); %> /><#checkbox_No#>
+																<input type="radio" name="ss_schedule_enable_x" id="ss_schedule_enable_1" class="input" value="1" <% nvram_match_x("", "ss_schedule_enable", "1", "checked"); %>/><#checkbox_Yes#>
+																<input type="radio" name="ss_schedule_enable_x" id="ss_schedule_enable_0" class="input" value="0" <% nvram_match_x("", "ss_schedule_enable", "0", "checked"); %>/><#checkbox_No#>
 															</div>
 														</td>
 													</tr>
 													<tr id="ss_schedule_date_tr">
 														<th width="50%"><#ss_schedule_date_tr#></th>
 														<td>
-															<input type="checkbox" name="ss_date_x_Sun" class="input" onclick="check_Timefield_checkbox();"><#WF_Sun#>
-															<input type="checkbox" name="ss_date_x_Mon" class="input" onclick="check_Timefield_checkbox();"><#WF_Mon#>
-															<input type="checkbox" name="ss_date_x_Tue" class="input" onclick="check_Timefield_checkbox();"><#WF_Tue#>
-															<input type="checkbox" name="ss_date_x_Wed" class="input" onclick="check_Timefield_checkbox();"><#WF_Wed#>
-															<input type="checkbox" name="ss_date_x_Thu" class="input" onclick="check_Timefield_checkbox();"><#WF_Thu#>
-															<input type="checkbox" name="ss_date_x_Fri" class="input" onclick="check_Timefield_checkbox();"><#WF_Fri#>
-															<input type="checkbox" name="ss_date_x_Sat" class="input" onclick="check_Timefield_checkbox();"><#WF_Sat#>
+															<div class="controls">
+																<label class="checkbox inline"><input type="checkbox" class="input" name="ss_date_x_Mon" onChange="check_Timefield_checkbox();"/><#DAY_Mon#></label>
+																<label class="checkbox inline"><input type="checkbox" class="input" name="ss_date_x_Tue" onChange="check_Timefield_checkbox();"/><#DAY_Tue#></label>
+																<label class="checkbox inline"><input type="checkbox" class="input" name="ss_date_x_Wed" onChange="check_Timefield_checkbox();"/><#DAY_Wed#></label>
+																<label class="checkbox inline"><input type="checkbox" class="input" name="ss_date_x_Thu" onChange="check_Timefield_checkbox();"/><#DAY_Thu#></label>
+																<label class="checkbox inline"><input type="checkbox" class="input" name="ss_date_x_Fri" onChange="check_Timefield_checkbox();"/><#DAY_Fri#></label>
+																<label class="checkbox inline"><input type="checkbox" class="input" name="ss_date_x_Sat" onChange="check_Timefield_checkbox();"/><#DAY_Sat#></label>
+																<label class="checkbox inline"><input type="checkbox" class="input" name="ss_date_x_Sun" onChange="check_Timefield_checkbox();"/><#DAY_Sun#></label>
+															</div>
 														</td>
 													</tr>
 													<tr id="ss_schedule_time_tr">
-														<th width="50%"><#ss_schedule_time_tr#></th>
+														<th style="border-top: 0 none;"><#ss_schedule_time_tr#></th>
 														<td>
-															<input type="text" maxlength="2" class="input_3_table" style="width: 30px" name="ss_time_x_hour" onKeyPress="return validator.isNumber(this,event);" onblur="validator.timeRange(this, 0);" autocorrect="off" autocapitalize="off"><#Hour#>:
-															<input type="text" maxlength="2" class="input_3_table" style="width: 30px" name="ss_time_x_min" onKeyPress="return validator.isNumber(this,event);" onblur="validator.timeRange(this, 1);" autocorrect="off" autocapitalize="off"><#Minute#>
+															<input type="text" maxlength="2" style="width: 20px;" size="2" name="ss_time_x_hour" onKeyPress="return validator.isNumber(this,event);" onblur="validator.timeRange(this, 0);" autocorrect="off" autocapitalize="off"><#Hour#>:
+															<input type="text" maxlength="2" style="width: 20px;" size="2" name="ss_time_x_min" onKeyPress="return validator.isNumber(this,event);" onblur="validator.timeRange(this, 1);" autocorrect="off" autocapitalize="off"><#Minute#>
 														</td>
 													</tr>
 													<tr><th width="50%"><#Keyword_filter#></th>
@@ -1803,14 +1811,12 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 																<option value="d">自定义节点</option>
 																<option value="c">订阅节点</option>
 															</select>
-															<input type="button" id="btn_del_link" class="btn btn-danger" value="删除节点">
-															<input type="button" id="btn_rest_link" class="btn btn-danger" value="清空节点" onclick="ddlink();">
 															<input type="button" id="btn_add_link" class="btn btn-info" value="添加/导入">
 															<input type="button" id="btn_update_link" class="btn btn-info" value="更新节点" onclick="dlink();">
-															<input name="button" type="button" class="btn btn-primary" onclick="applyRule();" value="<#CTL_apply#>">
 															<input type="button" id="btn_ping_link" class="btn btn-info" value="ping所选">
 															<input type="button" id="btn_aping_link" class="btn btn-info" value="ping全部">
-															<input type="button" id="btn_reconnect" class="btn btn-info" value="刷新页面" onclick="window.location.reload();">
+															<input type="button" id="btn_del_link" class="btn btn-danger" value="删除节点">
+															<input type="button" id="btn_rest_link" class="btn btn-danger" value="清空节点" onclick="ddlink();">
 															<input type="button" id="btn_ctime" style="display:none;" class="btn btn-good" value="正在运行脚本:0s" onclick="">
 														</th>
 													</tr>
@@ -2408,8 +2414,8 @@ setTimeout('document.getElementById("btn_ctime").style.display="none";',1000);
 													<tr>
 														<td>
 															<center>
-																<input type="button" id="btn_clearLog" class="btn btn-info" style="width: 200px" value=<#CTL_clear#> onClick="clearLog();">
-																<input type="button" id="btn_reconnect" class="btn btn-info" style="width: 200px" value=<#CTL_refresh#> onclick="window.location.reload();">
+																<input type="button" id="btn_ClearssrplusLog" class="btn btn-info" style="width: 200px" value=<#CTL_clear#> onClick="ClearssrplusLog();">
+																<input type="button" class="btn btn-info" style="width: 200px" value=<#CTL_refresh#> onClick="parent.location.reload();">
 															</center>
 														</td>
 													</tr>

@@ -1,5 +1,5 @@
-SRC_NAME := xray-1.8.11
-SRC_URL := https://github.com/XTLS/Xray-core/archive/refs/tags/v1.8.11.tar.gz
+SRC_NAME := xray-1.8.13
+SRC_URL := https://github.com/XTLS/Xray-core/archive/refs/tags/v1.8.13.tar.gz
 
 THISDIR = $(shell pwd)
 
@@ -17,7 +17,8 @@ extract_test:
 	fi )
 
 build:
-	( cd $(SRC_NAME)/main; \
+	( sed -i "s/go 1.22/go 1.22.2/g" $(THISDIR)/$(SRC_NAME)/go.mod; \
+	cd $(SRC_NAME)/main; \
 	GOOS=linux GOARCH=mipsle CGO_ENABLED=0 go build -o $(THISDIR)/xray -trimpath -ldflags "-s -w -buildid="; \
 	)
 

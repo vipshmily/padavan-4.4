@@ -31,15 +31,16 @@
 #ifndef	__RT_CONFIG_H__
 #define	__RT_CONFIG_H__
 
+#if (CONFIG_RT_FIRST_CARD == 7602 || CONFIG_RT_FIRST_CARD == 7612 || CONFIG_RT_FIRST_CARD == 7620) && \
+    (CONFIG_RT_SECOND_CARD == 7602 || CONFIG_RT_SECOND_CARD == 7612)
+#define DRIVER_HAS_MULTI_DEV
+#endif
 
 #include "rtmp_comm.h"
 
 #include "rtmp_def.h"
 #include "rtmp_chip.h"
 #include "rtmp_timer.h"
-#ifdef WH_EZ_SETUP
-#include "easy_setup/ez_hooks.h"
-#endif /* WH_EZ_SETUP */
 
 
 #ifdef AGS_SUPPORT
@@ -52,6 +53,12 @@
 #include "fpga/fpga_ctl.h"
 #endif
 
+#ifdef CONFIG_AP_SUPPORT
+#ifdef SMART_MESH
+#include "smart_mesh/smart_mesh_def.h"
+#endif /* SMART_MESH */
+#endif /* CONFIG_AP_SUPPORT */
+
 #include "mlme.h"
 #include "crypt_md5.h"
 #include "crypt_sha2.h"
@@ -59,11 +66,6 @@
 #include "crypt_aes.h"
 #include "crypt_arc4.h"
 /*#include "rtmp_cmd.h" */
-
-#ifdef ROUTING_TAB_SUPPORT
-#include "routing_tab.h"
-#endif /* ROUTING_TAB_SUPPORT */
-
 #include "rtmp.h"
 #include "wpa.h"
 #include "chlist.h"
@@ -116,17 +118,23 @@
 #ifdef CLIENT_WDS
 #include "client_wds.h"
 #endif /* CLIENT_WDS */
-#endif /* CONFIG_AP_SUPPORT */
 
-#ifdef MWDS
-#include "mwds.h"
-#endif /* MWDS */
+#ifdef SMART_MESH
+#include "smart_mesh/smart_mesh_func.h"
+#endif /* SMART_MESH */
+#endif /* CONFIG_AP_SUPPORT */
 
 #ifdef MAT_SUPPORT
 #include "mat.h"
 #endif /* MAT_SUPPORT */
 
 
+#ifdef CONFIG_STA_SUPPORT
+#include "sta.h"
+#ifdef WSC_STA_SUPPORT
+#define STA_WSC_INCLUDED
+#endif /* WSC_STA_SUPPORT */
+#endif /* CONFIG_STA_SUPPORT */
 
 #ifdef BLOCK_NET_IF
 #include "netif_block.h"
@@ -161,13 +169,14 @@
 #include "wapi.h"
 #endif /* WAPI_SUPPORT */
 
-/* Vendor Specific IE */
-#include "vendor.h"
-
 #ifdef DOT11K_RRM_SUPPORT
 #include "rrm.h"
 #endif /* DOT11K_RRM_SUPPORT */
 
+#ifdef DOT11Z_TDLS_SUPPORT
+#include "tdls.h"
+#include "tdls_uapsd.h"
+#endif /* DOT11Z_TDLS_SUPPORT */
 
 #if defined(AP_WSC_INCLUDED) || defined(STA_WSC_INCLUDED)
 #define WSC_INCLUDED
@@ -188,6 +197,14 @@
 #endif /* APCLI_WPA_SUPPLICANT_SUPPORT */
 
 
+#ifdef CONFIG_STA_SUPPORT
+#ifdef NATIVE_WPA_SUPPLICANT_SUPPORT
+#ifndef WPA_SUPPLICANT_SUPPORT
+#error "Build for being controlled by NetworkManager or wext, please set HAS_WPA_SUPPLICANT=y and HAS_NATIVE_WPA_SUPPLICANT_SUPPORT=y"
+#endif /* WPA_SUPPLICANT_SUPPORT */
+#endif /* NATIVE_WPA_SUPPLICANT_SUPPORT */
+
+#endif /* CONFIG_STA_SUPPORT */
 
 #ifdef WSC_INCLUDED
 #include "crypt_biginteger.h"
@@ -225,10 +242,16 @@
 #endif /* WAPI_SUPPORT */
 
 
+#ifdef WFD_SUPPORT
+#include "wfd.h"
+#endif /* WFD_SUPPORT */
 
 #ifdef DOT11_VHT_AC
 #include "vht.h"
 #endif /* DOT11_VHT_AC */
+#ifdef CONFIG_STA_SUPPORT
+#include "sta_cfg.h"
+#endif /* CONFIG_STA_SUPPORT */
 
 
 
@@ -280,9 +303,6 @@
 #ifdef CONFIG_HOTSPOT
 #include "hotspot.h"
 #endif
-#ifdef WH_EZ_SETUP
-#include "easy_setup/mt7612_driver_specific_func.h"
-#include "easy_setup/ez_hooks_proto.h"
-#endif /* WH_EZ_SETUP */
+
 #endif	/* __RT_CONFIG_H__ */
 

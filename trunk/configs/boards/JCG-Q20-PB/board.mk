@@ -1,9 +1,9 @@
 ##################################################################
-# Board PID # Board Name       # PRODUCT # Note
+# Board PID    # Board Name       # PRODUCT # Note
 ##################################################################
-# Q20       # Q20              # MT7621  #
+# JCG-Q20-PB   # JCG-Q20-PB       # MT7621  #
 ##################################################################
 
-CFLAGS += -DBOARD_Q20 -DBOARD_MT7915_DBDC
+CFLAGS += -DBOARD_JCG_Q20_PB -DBOARD_MT7915_DBDC
 BOARD_NUM_USB_PORTS=0
 CONFIG_BOARD_RAM_SIZE=256

@@ -1,3 +1,5 @@
+/* C-Life-XG1 */
+
 #define BOARD_PID		"C-Life-XG1"
 #define BOARD_NAME		"C-Life-XG1"
 #define BOARD_DESC		"IoT Edge Router"

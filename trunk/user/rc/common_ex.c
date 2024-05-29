@@ -252,7 +252,6 @@ get_eeprom_params(void)
 			if ((unsigned char)regspec_code[i] > 0x7f)
 				regspec_code[i] = 0;
 		}
-		
 		if (!check_regspec_code(regspec_code))
 			strcpy(regspec_code, "CE");
 	}
@@ -376,7 +375,6 @@ get_eeprom_params(void)
 					count_0xff++;
 			}
 		}
-		
 		nvram_wlan_set_int(1, "txbf_en", (count_0xff == 33) ? 0 : 1);
 		}
 	}
@@ -442,21 +440,17 @@ char_to_ascii(char *output, char *input)
 	char *ptr;
 
 	ptr = output;
-	for (i = 0; i < strlen(input); i++)
-	{
+	for (i = 0; i < strlen(input); i++) {
 		if ((input[i] >= '0' && input[i] <= '9')
 			||(input[i] >= 'A' && input[i] <= 'Z')
 			||(input[i] >= 'a' && input[i] <= 'z')
 			|| input[i] == '!' || input[i] == '*'
 			|| input[i] == '(' || input[i] == ')'
 			|| input[i] == '_' || input[i] == '-'
-			|| input[i] == '\'' || input[i] == '.')
-		{
+			|| input[i] == '\'' || input[i] == '.') {
 			*ptr = input[i];
 			ptr ++;
-		}
-		else
-		{
+		} else {
 			sprintf(tmp, "%%%.02X", input[i]);
 			strcpy(ptr, tmp);
 			ptr += 3;
@@ -475,9 +469,7 @@ fput_string(const char *name, const char *value)
 		fputs(value, fp);
 		fclose(fp);
 		return 0;
-	}
-	else
-	{
+	} else {
 		return errno;
 	}
 }

@@ -1,1 +1,5 @@
 .vscode
+toolchain/toolchain-*/
+
+# MacOS
+.DS_Store

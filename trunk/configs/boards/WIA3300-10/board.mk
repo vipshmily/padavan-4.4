@@ -1,9 +1,9 @@
 ##################################################################
-# Board PID # Board Name       # PRODUCT # Note
+# Board PID    # Board Name   # PRODUCT # Note
 ##################################################################
-# K2P       # K2P              # MT7621  #
+# WIA3300-10   # WIA3300-10   # MT7621  #
 ##################################################################
 
-CFLAGS += -DBOARD_WIA3300-10 -DBOARD_MT7615_DBDC
+CFLAGS += -DBOARD_WIA3300_10 -DBOARD_MT7615_DBDC
 BOARD_NUM_USB_PORTS=1
 CONFIG_BOARD_RAM_SIZE=256
