@@ -3,8 +3,9 @@ CT_VERSION    := 1.26.0
 CT_DIR        := $(TOPDIR)/crosstool-ng-$(CT_VERSION)
 CT_PREFIX     := $(TOPDIR)/toolchain-mipsel
 CT_TARGET     := mipsel-linux-uclibc
+CT_TARGET1    := mipsel-linux-uclibc-gcc10
 CT_URL        := https://github.com/crosstool-ng/crosstool-ng/releases/download/crosstool-ng-$(CT_VERSION)/crosstool-ng-$(CT_VERSION).tar.xz
-TOOLCHAIN_URL := https://github.com/vipshmily/padavan-4.4/releases/download/toolchain/$(CT_TARGET).tar.xz
+TOOLCHAIN_URL := https://github.com/vipshmily/padavan-4.4/releases/download/toolchain/$(CT_TARGET1).tar.xz
 
 all: build
 
