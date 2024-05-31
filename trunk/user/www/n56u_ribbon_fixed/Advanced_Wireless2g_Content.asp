@@ -418,7 +418,7 @@ function validate_wlphrase(s, v, obj){
                                             <td>
                                                 <select name="rt_HT_BW" class="input" onChange="return change_common_rt(this, 'WLANConfig11b', 'rt_HT_BW')">
                                                     <option value="0" <% nvram_match_x("","rt_HT_BW", "0","selected"); %>>20 MHz</option>
-                                                    <option value="1" <% nvram_match_x("","rt_HT_BW", "1","selected"); %>>20/40 MHz</option>
+                                                    <option value="1" <% nvram_match_x("","rt_HT_BW", "1","selected"); %>>20/40 MHz (*)</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -462,7 +462,7 @@ function validate_wlphrase(s, v, obj){
                                                     <option value="open" <% nvram_match_x("", "rt_auth_mode", "open", "selected"); %>>Open System</option>
                                                     <option value="shared" <% nvram_match_x("", "rt_auth_mode", "shared", "selected"); %>>Shared Key</option>
                                                     <option value="psk" <% nvram_double_match_x("", "rt_auth_mode", "psk", "", "rt_wpa_mode", "1", "selected"); %>>WPA-Personal</option>
-                                                    <option value="psk" <% nvram_double_match_x("", "rt_auth_mode", "psk", "", "rt_wpa_mode", "2", "selected"); %>>WPA2-Personal</option>
+                                                    <option value="psk" <% nvram_double_match_x("", "rt_auth_mode", "psk", "", "rt_wpa_mode", "2", "selected"); %>>WPA2-Personal (*)</option>
                                                     <option value="psk" <% nvram_double_match_x("", "rt_auth_mode", "psk", "", "rt_wpa_mode", "0", "selected"); %>>WPA-Auto-Personal</option>
                                                     <option value="wpa" <% nvram_double_match_x("", "rt_auth_mode", "wpa", "", "rt_wpa_mode", "3", "selected"); %>>WPA-Enterprise (Radius)</option>
                                                     <option value="wpa2" <% nvram_match_x("", "rt_auth_mode", "wpa2", "selected"); %>>WPA2-Enterprise (Radius)</option>

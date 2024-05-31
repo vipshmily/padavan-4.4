@@ -40,7 +40,7 @@ $j(document).ready(function() {
 
 <% login_state_hook(); %>
 <% openssl_util_hook(); %>
-var lan_ipaddr = '<% nvram_get_x("", "lan_ipaddr_t"); %>';
+var lan_ipaddr = '<% nvram_get_x("", "lan_ipaddr"); %>';
 var http_proto = '<% nvram_get_x("", "http_proto"); %>';
 var http_port = '<% nvram_get_x("", "http_lanport"); %>';
 var https_port = '<% nvram_get_x("", "https_lport"); %>';
@@ -81,12 +81,12 @@ function initial(){
 		http_proto_change();
 	}
 	change_crond_enabled();
-	
+
 	if(found_app_ttyd()){	
 		$("tbl_ttyd").style.display = "";
 		change_ttyd_enabled();
 	}
-	
+
 	if(!found_app_vlmcsd()){
 		showhide_div('div_vlmcsd', 0);
 	}
@@ -100,11 +100,9 @@ function initial(){
 function applyRule(){
 	if(validForm()){
 		showLoading();
-		
 		document.form.action_mode.value = " Apply ";
 		document.form.current_page.value = "/Advanced_Services_Content.asp";
 		document.form.next_page.value = "";
-		
 		document.form.submit();
 	}
 }
@@ -361,9 +359,9 @@ function on_ttyd_link(){
                                             <th width="50%"><#Adm_System_http_access#></th>
                                             <td>
                                                 <select name="http_access" class="input">
-                                                    <option value="0" <% nvram_match_x("", "http_access", "0","selected"); %>><#checkbox_No#> (*)</option>
+                                                    <option value="0" <% nvram_match_x("", "http_access", "0","selected"); %>><#checkbox_No#></option>
                                                     <option value="1" <% nvram_match_x("", "http_access", "1","selected"); %>>Wired clients only</option>
-                                                    <option value="2" <% nvram_match_x("", "http_access", "2","selected"); %>>Wired and MainAP clients</option>
+                                                    <option value="2" <% nvram_match_x("", "http_access", "2","selected"); %>>Wired and MainAP clients (*)</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -481,8 +479,8 @@ function on_ttyd_link(){
                                             <th><#Adm_System_sshd#></th>
                                             <td>
                                                 <select name="sshd_enable" class="input" onchange="sshd_auth_change();">
-                                                    <option value="0" <% nvram_match_x("", "sshd_enable", "0","selected"); %>><#checkbox_No#> (*)</option>
-                                                    <option value="1" <% nvram_match_x("", "sshd_enable", "1","selected"); %>><#checkbox_Yes#></option>
+                                                    <option value="0" <% nvram_match_x("", "sshd_enable", "0","selected"); %>><#checkbox_No#></option>
+                                                    <option value="1" <% nvram_match_x("", "sshd_enable", "1","selected"); %>><#checkbox_Yes#> (*)</option>
                                                     <option value="2" <% nvram_match_x("", "sshd_enable", "2","selected"); %>><#checkbox_Yes#> (authorized_keys only)</option>
                                                 </select>
                                             </td>
@@ -499,7 +497,7 @@ function on_ttyd_link(){
 
                                     <table width="100%" cellpadding="4" cellspacing="0" class="table" id="tbl_wins" style="display:none">
                                         <tr>
-                                            <th colspan="2" style="background-color: #E3E3E3;">Windows Internet Name Service (WINS)</th>
+                                            <th colspan="2" style="background-color: #E3E3E3;"><#Adm_Svc_Windows_Internet_Name_Service#></th>
                                         </tr>
                                         <tr>
                                             <th width="50%"><#Adm_Svc_wins#></th>
@@ -542,7 +540,7 @@ function on_ttyd_link(){
                                             <th colspan="2" style="background-color: #E3E3E3;"><#Adm_Svc_ttyd_setup#></th>
                                         </tr>
                                         <tr id="div_ttyd">
-                                            <th width="50%"><#Adm_Svc_ttyd_enable#></th>
+                                            <th width="50%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,23,4);"><#Adm_Svc_ttyd_enable#></a></th>
                                             <td colspan="2">
                                                 <div class="main_itoggle">
                                                     <div id="ttyd_enable_on_of">

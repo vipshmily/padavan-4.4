@@ -3,7 +3,16 @@
 This project is based on original rt-n56u with latest mtk 4.4.198 kernel, which is fetch from D-LINK GPL code.
 
 #### Extra functions / changes
+- Adding user/chinadns-ng , and fix shadowsocks + chinadns-ng using local domain whitellist.
 - AP Relay auto-daemon
+
+
+#### SS/SSR
+- Transparent proxy (iptables) wasn't cleaned completely, this issue is fixed.
+- Adding DNSProxy , Local DNS integrated with SS/SSR 
+- Dnsmasq optimization specially for SS/SSR 
+- Resolve DNS pollution - Adding DNS i/p in china-route mode
+- Fast-open option is enabled according to linux version
 ##### Enhancements in this repo
 
 - commits has beed rewritten on top of [hanwckf/rt-n56u](https://github.com/hanwckf/rt-n56u) repo for better history tracking
