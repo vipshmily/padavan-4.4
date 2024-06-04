@@ -706,7 +706,7 @@ gen_ralink_config(int is_soc_ap, int is_aband, int disable_autoscan)
 	fprintf(fp, "DfsDedicatedZeroWait=%d\n", 0);
 	fprintf(fp, "DfsZeroWaitDefault=%d\n", 0);
 //	fprintf(fp, "KernelRps=%d\n", 0);
-	fprintf(fp, "RRMEnable=%d\n", 0);
+//	fprintf(fp, "RRMEnable=%d\n", 0);
 	fprintf(fp, "MboSupport=%d\n", 0);
 
 #if defined (USE_MT7615_AP) || defined (USE_MT7915_AP)
@@ -756,6 +756,11 @@ gen_ralink_config(int is_soc_ap, int is_aband, int disable_autoscan)
 			fprintf(fp, "MuMimoDlEnable=%d\n", 0);
 			fprintf(fp, "MuMimoUlEnable=%d\n", 0);
 		}
+		/* 5g bandsteering configs */
+		if (nvram_wlan_get_int(1, "band_steering"))
+			fprintf(fp, "BandSteering=%d\n", 1);
+		else
+			fprintf(fp, "BandSteering=%d\n", 0);
 #if defined(BOARD_HAS_5G_11AX) && BOARD_HAS_5G_11AX
 		if (i_phy_mode == PHY_11AX_5G) {
 			/* 5g wifi6 mode */
@@ -1291,29 +1296,13 @@ gen_ralink_config(int is_soc_ap, int is_aband, int disable_autoscan)
 	//HT_AMSDU
 	i_val = nvram_wlan_get_int(is_aband, "HT_AMSDU");
 	fprintf(fp, "HT_AMSDU=%d;%d\n", i_val, i_val);
-
+	
+	//MFPC
+	fprintf(fp, "PMFMFPC=1;1\n");
 	//HT_BAWinSize
 	i_val = nvram_wlan_get_int(is_aband, "HT_BAWinSize");
 	if (i_val < 1 || i_val > 256) i_val = 256;
 	fprintf(fp, "HT_BAWinSize=%d\n", i_val);
-	
-	//802.11KVR
-	i_val = nvram_wlan_get_int(is_aband, "HT_80211KV");
-	fprintf(fp, "RRMEnable=%d;%d\n", i_val,i_val);
-	fprintf(fp, "WNMEnable=%d;%d\n", i_val,i_val);
-	i_val = nvram_wlan_get_int(is_aband, "HT_80211R");
-	#if defined (BOARD_MT7915_DBDC)
-	if (is_aband)
-	{fprintf(fp, "FtSupport=%d;%d\n",i_val);}
-	else
-	{fprintf(fp, "FtSupport=%d;%d\n",i_val);}
-	fprintf(fp, "FtOtd=0;0\n");
-	fprintf(fp, "FtRic=1;1\n");
-	#else 
-	fprintf(fp, "FtSupport=%d\n",i_val);
-	fprintf(fp, "FtOtd=0\n");
-	fprintf(fp, "FtRic=1\n");
-	#endif
 
 	//802.11KVR
 	i_val = nvram_wlan_get_int(is_aband, "HT_80211KV");
