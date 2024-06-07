@@ -1372,12 +1372,11 @@ VOID FT_R1KHInfoMaintenance(
 				*/
 				pMacEntry = MacTableLookup(pAd, pEntry->StaMac);
 
+				if (pMacEntry)
+				{
 				DBGPRINT(RT_DEBUG_ERROR,
 					("%s:PMKCache timeout.Kick out wcid(%d),delete FT_R1khEntry!\n",
 							__func__, pMacEntry->wcid));
-
-				if (pMacEntry)
-				{
 					DisassocParmFill(pAd, &DisassocReq, pEntry->StaMac,
 						MLME_UNSPECIFY_FAIL);
 					MlmeEnqueue(pAd, AP_ASSOC_STATE_MACHINE, APMT2_MLME_DISASSOC_REQ,
@@ -1394,7 +1393,7 @@ VOID FT_R1KHInfoMaintenance(
 				pEntryTmp = pEntry->pNext;
 				delEntryList(&pFtTab->FT_R1khEntryTab[HashIdx],
 								(RT_LIST_ENTRY *)pEntry);
-				os_free_mem(pAd, pEntry);
+				os_free_mem(NULL, pEntry);
 				pFtTab->FT_R1khEntryTabSize--;
 				pEntry = pEntryTmp;
 			}
