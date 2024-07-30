@@ -1,4 +1,4 @@
-SRC_NAME=librtlsdr-2.0.1
+SRC_NAME=librtlsdr-2.0.2
 SRC_URL=https://github.com/steve-m/librtlsdr/archive/v2.0.1.tar.gz
 
 all: download_test extract_test config_test

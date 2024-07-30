@@ -1,4 +1,4 @@
-SRC_NAME=readline-8.2
+SRC_NAME=readline-8.3-alpha
 SRC_URL=http://ftp.gnu.org/gnu/readline/$(SRC_NAME).tar.gz
 
 all: download_test extract_test config_test
@@ -11,7 +11,7 @@ download_test:
 
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
-		tar xf $(SRC_NAME).tar.gz ; \
+		tar zxf $(SRC_NAME).tar.gz ; \
 		patch -d $(SRC_NAME) -p0 < $(SRC_NAME).patch ; \
 	fi )
 
